@@ -44,7 +44,7 @@ static int animationPeriod = 10; // Time interval between frames.
 static int turnGoal = 0;
 static int storeOrigPos = 1;
 
-static int width = 1500, height = 900;
+static int width = 1000, height = 700;
 
 // Camera class.
 class Camera
@@ -207,6 +207,7 @@ void drawScene(void)
 	glColor3fv(player1color);
 	glRasterPos3f(-28.0, 25.0, 0.0);
 	writeBitmapString((void*)font, (char*)"PLAYER ONE"); 
+	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(xVal1 -  sin( (PI/180.0) * angle) , 1.0, zVal1 -  cos( (PI/180.0) * angle) );
