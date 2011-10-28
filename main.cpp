@@ -135,32 +135,32 @@ void drawWallFloors ()
 	// Draw walls of arena
 	glColor3f(0.0, 0.0, 0.8);
 	glBegin(GL_QUADS); 
-	glVertex3f(arenawidth, arenaheight, -arenalength+10);                               
-	glVertex3f(-arenawidth, arenaheight, -arenalength+10);                          
-	glVertex3f(-arenawidth, -10, -arenalength+10); 
+	glVertex3f(arenawidth, arenaheight, -arenalength);                               
+	glVertex3f(-arenawidth, arenaheight, -arenalength);                          
+	glVertex3f(-arenawidth, -10, -arenalength); 
 	glColor3f(0.0, 0.0, 0.4);             
-	glVertex3f(arenawidth, -10, -arenalength+10);
+	glVertex3f(arenawidth, -10, -arenalength);
 	glColor3f(0.0, 0.0, 0.8);       
 
-	glVertex3f(arenawidth, arenaheight, arenalength+10);  
-	glVertex3f(-arenawidth, arenaheight, arenalength+10);                          
-	glVertex3f(-arenawidth, -10, arenalength+10);   
+	glVertex3f(arenawidth, arenaheight, arenalength);  
+	glVertex3f(-arenawidth, arenaheight, arenalength);                          
+	glVertex3f(-arenawidth, -10, arenalength);   
 	glColor3f(0.0, 0.0, 0.4);              
-	glVertex3f(arenawidth, -10, arenalength+10);  
+	glVertex3f(arenawidth, -10, arenalength);  
 	glColor3f(0.0, 0.0, 0.8);         
 
-	glVertex3f(-arenawidth, arenaheight, -arenalength+10);  
-	glVertex3f(-arenawidth, arenaheight, arenalength+10);                         
-	glVertex3f(-arenawidth, -10, arenalength+10); 
+	glVertex3f(-arenawidth, arenaheight, -arenalength);  
+	glVertex3f(-arenawidth, arenaheight, arenalength);                         
+	glVertex3f(-arenawidth, -10, arenalength); 
 	glColor3f(0.0, 0.0, 0.4);               
-	glVertex3f(-arenawidth, -10, -arenalength+10);  
+	glVertex3f(-arenawidth, -10, -arenalength);  
 	glColor3f(0.0, 0.0, 0.8);  
 
-	glVertex3f(arenawidth, arenaheight, -arenalength+10);  
-	glVertex3f(arenawidth, arenaheight, arenalength+10);                         
-	glVertex3f(arenawidth, -10, arenalength+10);   
+	glVertex3f(arenawidth, arenaheight, -arenalength);  
+	glVertex3f(arenawidth, arenaheight, arenalength);                         
+	glVertex3f(arenawidth, -10, arenalength);   
 	glColor3f(0.0, 0.0, 0.4);             
-	glVertex3f(arenawidth, -10, -arenalength+10);   
+	glVertex3f(arenawidth, -10, -arenalength);   
 	glColor3f(0.0, 0.0, 0.8);           
 	glEnd(); 
 
@@ -169,11 +169,13 @@ void drawWallFloors ()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	for(float z=-arenalength; z<arenalength; z+=2.0)
 	{
-		glBegin(GL_LINE_LOOP);
+		glBegin(GL_QUADS);
 		for(float x=-arenawidth; x<arenawidth; x+=2.0)
 		{
-			glVertex3f(x, -10, z);
-			glVertex3f(x, -10, z+5.0);
+			glVertex3f(x, -10, z);                               
+			glVertex3f(x+2, -10, z);                               
+			glVertex3f(x+2, -10, z+2);                               
+			glVertex3f(x, -10, z+2);                               
 		}
 		glEnd();
 	}
