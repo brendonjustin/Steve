@@ -215,12 +215,12 @@ void drawScene(void)
 	// Locate the camera at the tip of the opject and pointing in the direction of the object
 	//want behind object!!!!
 	cout << angle << endl;
-	gluLookAt(xVal1 - 10 * sin( (PI/180.0) * angle), 
+	gluLookAt(xVal1 , 
 		0.0, 
-		zVal1 - 10 * cos( (PI/180.0) * angle), 
-		xVal1,
-		0.0,
 		zVal1, 
+		xVal1- 12 * sin( (PI/180.0) * angle),
+		0.0,
+		zVal1- 12 * cos( (PI/180.0) * angle), 
 		0.0, 
 		1.0, 
 		0.0);
@@ -232,7 +232,7 @@ void drawScene(void)
 
 	//draw bike
 	glPushMatrix();
-	glTranslatef(xVal1 , 0.0, zVal1);
+	glTranslatef(xVal1 - 12 * sin( (PI/180.0) * angle), -10.0, zVal1- 12 * cos( (PI/180.0) * angle));
 	glRotatef(angle, 0.0, 1.0, 0.0);
 	glColor3fv(player1color);
 	glutWireSphere(1.0, 10, 8);
