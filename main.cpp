@@ -211,21 +211,16 @@ void drawScene(void)
 	writeBitmapString((void*)font, (char*)"PLAYER ONE"); 
 	glPopMatrix();
 
-	glPushMatrix();
-	glTranslatef(xVal1 -  sin( (PI/180.0) * angle) , 1.0, zVal1 -  cos( (PI/180.0) * angle) );
-	glRotatef(angle, 0.0, 1.0, 0.0);
-	glutWireSphere(1.0, 10, 8);
-	//glCallList(bike);
-	glPopMatrix();
 
 	// Locate the camera at the tip of the opject and pointing in the direction of the object
 	//want behind object!!!!
+	cout << angle << endl;
 	gluLookAt(xVal1 - 10 * sin( (PI/180.0) * angle), 
 		0.0, 
 		zVal1 - 10 * cos( (PI/180.0) * angle), 
-		xVal1 - 11 * sin( (PI/180.0) * angle),
+		xVal1,
 		0.0,
-		zVal1 - 11 * cos( (PI/180.0) * angle), 
+		zVal1, 
 		0.0, 
 		1.0, 
 		0.0);
@@ -235,9 +230,15 @@ void drawScene(void)
 	drawWallFloors();
 	glPopMatrix();
 
-	//draw the bike
+	//draw bike
+	glPushMatrix();
+	glTranslatef(xVal1 , 0.0, zVal1);
+	glRotatef(angle, 0.0, 1.0, 0.0);
+	glColor3fv(player1color);
+	glutWireSphere(1.0, 10, 8);
+	//glCallList(bike);
+	glPopMatrix();
 	
-
 	//-- repeat for player 2 ---------------------------------------------
 	glLoadIdentity();
 	glViewport(0, 0, width, height/2.0);
