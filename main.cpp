@@ -80,8 +80,6 @@ class Player
 {
 public:
 	Player();
-	//path
-	//bike
 	void draw();
 	void drawCamera();
 
@@ -112,15 +110,7 @@ void Player::drawCamera()
 // Function to draw man.
 void Player::draw()
 {
-	// bike body
-	glColor3f(0.0, 1.0, 0.0);
-	glTranslatef(0.0, -21.0, 1.0);
-	glPushMatrix();
-	glScalef(2.0, 8.0, 2.0);
-	glutWireCube(1.0);
-	// wheels
-
-	glPopMatrix(); 
+ 
 }
 
 // Routine to draw a bitmap character string.
@@ -179,6 +169,7 @@ void drawWallFloors ()
 		}
 		glEnd();
 	}
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 int BikeCollision(float x, float z, float a)
@@ -214,7 +205,7 @@ void drawScene(void)
 
 	// Locate the camera at the tip of the opject and pointing in the direction of the object
 	//want behind object!!!!
-	cout << angle << endl;
+	//cout << angle << endl;
 	gluLookAt(xVal1 , 
 		0.0, 
 		zVal1, 
@@ -235,8 +226,7 @@ void drawScene(void)
 	glTranslatef(xVal1 - 12 * sin( (PI/180.0) * angle), -10.0, zVal1- 12 * cos( (PI/180.0) * angle));
 	glRotatef(angle, 0.0, 1.0, 0.0);
 	glColor3fv(player1color);
-	glutWireSphere(1.0, 10, 8);
-	//glCallList(bike);
+	glCallList(bike);
 	glPopMatrix();
 	
 	//-- repeat for player 2 ---------------------------------------------
@@ -276,6 +266,7 @@ void animate(int value)
 	}
 	if (animateLeft)
 	{
+		//dissable right while going left
 		isAnimate=0;
 		if(storeOrigPos)
 		{
@@ -342,16 +333,58 @@ void animate(int value)
 void setup(void) 
 {
 	glClearColor(1.0, 1.0, 1.0, 0.0);  
-	/*bike = glGenLists(1);
+	bike = glGenLists(1);
 	glNewList(bike, GL_COMPILE);
 	glPushMatrix();
 	glRotatef(180.0, 0.0, 1.0, 0.0); // make bike point down the z-axis initially
-	glColor3f (1.0, 1.0, 1.0);  //if player1, one color, if player2 different color
-	glutWireCone(5.0, 10.0, 10, 10);
-	glPopMatrix();
-	glEndList();*/
+	//glColor3fv (player1color);  //if player1, one color, if player2 different color
+	//if player 1, this color, if player 2....
+	glScalef(0.5, 1.0, 1.0);
+	//glutSolidCube(1.0);
+	glBegin(GL_QUADS);
+	glVertex3f(-1,-1,-1);
+	glVertex3f( 1,-1,-1);
+	glVertex3f( 1, 1,-1);
+	glColor3f (0.0, 0.0, 0.0);
+	glVertex3f(-1, 1,-1);
+	glColor3fv (player1color);
+	 
+	glVertex3f(-1,-1,-1);
+	glVertex3f(-1,-1, 1);
+	glVertex3f(-1, 1, 1);
+	glColor3f (0.0, 0.0, 0.0);
+	glVertex3f(-1, 1,-1);
+	glColor3fv (player1color);
+	 
+	glVertex3f( 1,-1, 1);
+	glVertex3f( 1,-1,-1);
+	glVertex3f( 1, 1,-1);
+	glColor3f (1.0, 0.5, 0.5);
+	glVertex3f( 1, 1, 1);
+	glColor3fv (player1color);
+	 
+	glVertex3f(-1,-1,-1);
+	glVertex3f( 1,-1,-1);
+	glVertex3f( 1,-1, 1);
+	glColor3f (0.5, 0.0, 0.0);
+	glVertex3f(-1,-1, 1);
+	glColor3fv (player1color);
+	 
+	glVertex3f(-1,-1, 1);
+	glVertex3f( 1,-1, 1);
+	glVertex3f( 1, 1, 1);
+	glColor3f (1.0, 0.5, 0.5);
+	glVertex3f(-1, 1, 1);
+	glColor3fv (player1color);
+	glEnd();
 
-	// starting positions for bike and wall
+	//glutSolidSphere(1.0, 10.0, 10.0);
+
+	glPopMatrix();
+
+	glEndList();
+
+	// starting positions for bikes
 	// Initialize global iterators for manVector.
 
 	// Initialize camera.
