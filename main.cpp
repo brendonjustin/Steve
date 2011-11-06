@@ -53,31 +53,6 @@ static int storeOrigPos = 1;
 
 static int width = 1000, height = 700;
 
-// Camera class.
-class Camera
-{
-public:
-	Camera();
-
-	float getViewDirection() const { return viewDirection; }
-	float getZoomDistance() const { return zoomDistance; }
-
-private:
-	float viewDirection;
-	float zoomDistance;
-};
-
-// Global camera.
-Camera onecam;
-Camera twocam;
-
-// Camera constructor.
-Camera::Camera()
-{
-	viewDirection = 0.0;
-	zoomDistance = 30.0;
-}
-
 // Routine to draw a bitmap character string.
 void writeBitmapString(void *font, char *string)
 {  
@@ -219,9 +194,15 @@ void drawScene(void)
 	writeBitmapString((void*)font, (char*)"PLAYER TWO"); 
 
 	// Place camera.
-	gluLookAt(twocam.getZoomDistance() * sin(twocam.getViewDirection()*PI/180.0), 0.0, 
-		twocam.getZoomDistance() * cos(twocam.getViewDirection()*PI/180.0), 0.0, 
-		0.0, 0.0, 0.0, 1.0, 0.0); 
+	gluLookAt(xVal2 + 10 * sin( (PI/180.0) * angle2), 
+		-4.0, 
+		zVal2+ 10 * cos( (PI/180.0) * angle2), 
+		xVal2,
+		-4.0,
+		zVal2, 
+		0.0, 
+		1.0, 
+		0.0); 
 
 	//draw walls and floor
 	drawWallFloors();
@@ -238,8 +219,8 @@ void animate(int value)
 		xVal1 = xVal1 - sin(angle1 * PI/180.0); 
 		zVal1 = zVal1 - cos(angle1 * PI/180.0);
 
-		xVal2 = xVal2 - sin(angle1 * PI/180.0); 
-		zVal2 = zVal2 - cos(angle1 * PI/180.0);
+		//xVal2 = xVal2 - sin(angle1 * PI/180.0); 
+		//zVal2 = zVal2 - cos(angle1 * PI/180.0);
 	}
 	if (animateLeft)
 	{
@@ -360,10 +341,6 @@ void setup(void)
 
 	// starting positions for bikes
 	// Initialize global iterators for manVector.
-
-	// Initialize camera.
-	onecam = Camera();
-	twocam = Camera();
 }
 
 // OpenGL window reshape routine.
