@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////////////////////         
-// tron.cpp
+// main.cpp
 // 
 // 
 //
@@ -11,6 +11,8 @@
 #include <cmath>
 #include <vector>
 #include <fstream>
+
+#include "Player.h"
 
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
@@ -36,7 +38,7 @@ vector<int> path2;
 
 static unsigned int bike; // Display lists base index.
 
-static int arenaheight = 20;
+static int arenaheight = 50;
 static int arenawidth = 100;
 static int arenalength = 100;
 

@@ -3,12 +3,12 @@ TODO list:
 - write the Player class
 - use the Player class
 - set starting positions for each player
-
-- make menus
-- add a restart option
-
 - make the second player work
 - create walls behind player cycles
 
+- add a top-down view to each player's viewport
+
+- make menus
+- add a restart option
 - add a lose condition
 
