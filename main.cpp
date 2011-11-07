@@ -129,9 +129,14 @@ void drawWallFloors ()
 
 int BikeCollision(float x, float z, float a)
 {
-	int i,j;
-
 	// Check for collision with all walls
+	if(x < (-arenawidth+1.0) || x > (arenawidth-1.0)){
+		return 1;
+	}
+
+	if(z < (-arenalength+1.0) || z > (arenalength-1.0)){
+		return 1;
+	}
 
 	return 0;
 }
@@ -144,12 +149,9 @@ void drawScene(void)
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
-
 	glViewport(0, height/2.0, width, height/2.0);
 
-	// Locate the camera at the tip of the opject and pointing in the direction of the object
-	//want behind object!!!!
-	//cout << zVal1 << "  " << xVal1 << endl;
+	// Locate the camera at behind bike
 	gluLookAt(xVal1 + 10 * sin( (PI/180.0) * angle1), 
 		-4.0, 
 		zVal1+ 10 * cos( (PI/180.0) * angle1), 
@@ -181,6 +183,14 @@ void drawScene(void)
 	writeBitmapString((void*)font, (char*)"PLAYER ONE"); 
 	glPopMatrix();
 
+	if(isCollision){
+		glPushMatrix();
+		glTranslatef(0.0, 0.0, -50);
+		glColor3fv(player1color);
+		glRasterPos3f(-28.0, 25.0, 0.0);
+		writeBitmapString((void*)font, (char*)"CRAHSED!!!!!"); 
+		glPopMatrix();
+	}
 	
 	//-- repeat for player 2 ---------------------------------------------
 	glLoadIdentity();
@@ -206,6 +216,14 @@ void drawScene(void)
 
 	//draw walls and floor
 	drawWallFloors();
+	if(isCollision){
+		glPushMatrix();
+		glTranslatef(0.0, 0.0, -60);
+		glColor3fv(player1color);
+		glRasterPos3f(-28.0, 25.0, 0.0);
+		writeBitmapString((void*)font, (char*)"You Win!!!!!"); 
+		glPopMatrix();
+	}
 
 	glutSwapBuffers();
 }
@@ -214,75 +232,77 @@ void drawScene(void)
 void animate(int value)
 {
 	float goal, tempAngle, stillturn=0;
-	if (isAnimate) 
-	{
-		xVal1 = xVal1 - sin(angle1 * PI/180.0); 
-		zVal1 = zVal1 - cos(angle1 * PI/180.0);
+	isCollision = BikeCollision(xVal1, zVal1, angle1);
+	if(!isCollision){
+		if (isAnimate) 
+		{
+			xVal1 = xVal1 - sin(angle1 * PI/180.0); 
+			zVal1 = zVal1 - cos(angle1 * PI/180.0);
 
-		//xVal2 = xVal2 - sin(angle1 * PI/180.0); 
-		//zVal2 = zVal2 - cos(angle1 * PI/180.0);
-	}
-	if (animateLeft)
-	{
-		//dissable right while going left
-		isAnimate=0;
-		if(storeOrigPos)
+			//xVal2 = xVal2 - sin(angle1 * PI/180.0); 
+			//zVal2 = zVal2 - cos(angle1 * PI/180.0);
+		}
+		if (animateLeft)
 		{
-			goal = angle1+90.0;
-			if(goal>360.0){goal = goal-360.0; stillturn=1;}
-			turnGoal = goal;
-			//cout << "turning" << goal << endl;
-			storeOrigPos = 0;
-		}
-		else goal = turnGoal;
-		tempAngle = angle1;
-		if(angle1<goal||stillturn)
-		{	
-			tempAngle=tempAngle+10.0;
-			if (tempAngle > 360.0) tempAngle -= 360.0;
-			if (tempAngle < 0.0) tempAngle += 360.0;
-			angle1 = tempAngle;
-			//cout << goal << "   " << angle << endl;
-		}
-		else
-		{
-			animateLeft = 0;
-			storeOrigPos = 1;
-			isAnimate = 1;
-		}
+			//dissable right while going left
+			isAnimate=0;
+			if(storeOrigPos)
+			{
+				goal = angle1+90.0;
+				if(goal>360.0){goal = goal-360.0; stillturn=1;}
+				turnGoal = goal;
+				//cout << "turning" << goal << endl;
+				storeOrigPos = 0;
+			}
+			else goal = turnGoal;
+			tempAngle = angle1;
+			if(angle1<goal||stillturn)
+			{	
+				tempAngle=tempAngle+10.0;
+				if (tempAngle > 360.0) tempAngle -= 360.0;
+				if (tempAngle < 0.0) tempAngle += 360.0;
+				angle1 = tempAngle;
+				//cout << goal << "   " << angle << endl;
+			}
+			else
+			{
+				animateLeft = 0;
+				storeOrigPos = 1;
+				isAnimate = 1;
+			}
 		
-	}
+		}
 
-	if (animateRight)
-	{
-		isAnimate=0;
-		if(storeOrigPos)
+		if (animateRight)
 		{
-			goal = angle1-90.0;
-			if(goal<0.0){goal = goal+360.0; stillturn=1;}
-			turnGoal = goal;
-			//cout << "turning" << goal << endl;
-			storeOrigPos = 0;
-		}
-		else goal = turnGoal;
-		tempAngle = angle1;
-		if(angle1>goal||stillturn)
-		{	
-			tempAngle=tempAngle-10.0;
-			if (tempAngle > 360.0) tempAngle -= 360.0;
-			if (tempAngle < 0.0) tempAngle += 360.0;
-			angle1 = tempAngle;
-			//cout << goal << "   " << angle << endl;
-		}
-		else
-		{
-			animateRight = 0;
-			storeOrigPos = 1;
-			isAnimate = 1;
-		}
+			isAnimate=0;
+			if(storeOrigPos)
+			{
+				goal = angle1-90.0;
+				if(goal<0.0){goal = goal+360.0; stillturn=1;}
+				turnGoal = goal;
+				//cout << "turning" << goal << endl;
+				storeOrigPos = 0;
+			}
+			else goal = turnGoal;
+			tempAngle = angle1;
+			if(angle1>goal||stillturn)
+			{	
+				tempAngle=tempAngle-10.0;
+				if (tempAngle > 360.0) tempAngle -= 360.0;
+				if (tempAngle < 0.0) tempAngle += 360.0;
+				angle1 = tempAngle;
+				//cout << goal << "   " << angle << endl;
+			}
+			else
+			{
+				animateRight = 0;
+				storeOrigPos = 1;
+				isAnimate = 1;
+			}
 		
+		}
 	}
-
 	glutTimerFunc(animationPeriod, animate, 1);
 	glutPostRedisplay();
 }
@@ -405,7 +425,7 @@ void specialKeyInput(int key, int x, int y)
 	if (tempAngle < 0.0) tempAngle += 360.0;
 
 	// Move bike to next position only if there will not be collision
-
+	cout << BikeCollision(tempxVal, tempzVal, tempAngle) << endl;
 	if (!BikeCollision(tempxVal, tempzVal, tempAngle) )
 	{
 		isCollision = 0;
