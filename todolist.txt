@@ -3,8 +3,11 @@ TODO list:
 - write the Player class
 - use the Player class
 - set starting positions for each player
-- make the second player work
 - create walls behind player cycles
+
+- make the second player work
+- draw the second player
+- add input to control the second player
 
 - add a top-down view to each player's viewport
 

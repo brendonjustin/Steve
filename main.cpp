@@ -241,8 +241,8 @@ void animate(int value)
 			xVal1 = xVal1 - sin(angle1 * PI/180.0); 
 			zVal1 = zVal1 - cos(angle1 * PI/180.0);
 
-			//xVal2 = xVal2 - sin(angle1 * PI/180.0); 
-			//zVal2 = zVal2 - cos(angle1 * PI/180.0);
+			xVal2 = xVal2 - sin(angle1 * PI/180.0); 
+			zVal2 = zVal2 - cos(angle1 * PI/180.0);
 		}
 		if (animateLeft)
 		{
