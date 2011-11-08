@@ -193,6 +193,20 @@ void drawScene(void)
 		writeBitmapString((void*)font, (char*)"CRAHSED!!!!!"); 
 		glPopMatrix();
 	}
+
+	for(int i=0; i<path1.size(); i=i+3){
+		cout << path1[i] << "  " << path1[i+1] << "  ";
+		glColor3f(0.0, 0.0, 0.0);  
+		glPushMatrix();
+		glBegin(GL_QUADS); 
+		glVertex3f(path1[i], arenaheight, -path1[i+1]);                               
+		glVertex3f(-path1[i], arenaheight, -path1[i+1]);                          
+		glVertex3f(-path1[i], -10, -path1[i+1]);            
+		glVertex3f(path1[i], -10, -path1[i+1]);  
+		glEnd();
+		glPopMatrix();
+	}
+	cout << endl;
 	
 	//-- repeat for player 2 ---------------------------------------------
 	glLoadIdentity();
@@ -427,7 +441,6 @@ void specialKeyInput(int key, int x, int y)
 	if (tempAngle < 0.0) tempAngle += 360.0;
 
 	// Move bike to next position only if there will not be collision
-	cout << BikeCollision(tempxVal, tempzVal, tempAngle) << endl;
 	if (!BikeCollision(tempxVal, tempzVal, tempAngle) )
 	{
 		isCollision = 0;
