@@ -11,12 +11,14 @@ struct Point {
 class Player {
 public:
 	float color[3];
-	float direction;
+	int direction;
 	Point currentPos;
 	//vector<Point> prevPts;
 
 	void turn(bool right);
+	void DrawCat();
 	Point tick();
+	Player();
 
 private:
 	bool turning;

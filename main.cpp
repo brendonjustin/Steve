@@ -36,7 +36,7 @@ static float angle2 = 0.0; // Angle of the bike2
 vector<int> path1; //mark start and then every spot turned
 vector<int> path2;
 
-static unsigned int bike; // Display lists base index.
+static unsigned int cat; // Display lists base index.
 
 static int arenaheight = 50;
 static int arenawidth = 100;
@@ -129,7 +129,7 @@ void drawWallFloors ()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-int BikeCollision(float x, float z, float a)
+int CatCollision(float x, float z, float a)
 {
 	// Check for collision with all walls
 	if(x < (-arenawidth+1.0) || x > (arenawidth-1.0)){
@@ -174,7 +174,7 @@ void drawScene(void)
 	glTranslatef(xVal1,-10.0, zVal1);
 	glRotatef(angle1, 0.0, 1.0, 0.0);
 	glColor3fv(player1color);
-	glCallList(bike);
+	glCallList(cat);
 	glPopMatrix();
 
 	//write player 1
@@ -194,6 +194,7 @@ void drawScene(void)
 		glPopMatrix();
 	}
 
+	//NyaWall(path1);
 	for(int i=0; i<path1.size(); i=i+3){
 		cout << path1[i] << "  " << path1[i+1] << "  ";
 		glColor3f(0.0, 0.0, 0.0);  
@@ -248,7 +249,7 @@ void drawScene(void)
 void animate(int value)
 {
 	float goal, tempAngle, stillturn=0;
-	isCollision = BikeCollision(xVal1, zVal1, angle1);
+	isCollision = CatCollision(xVal1, zVal1, angle1);
 	if(!isCollision){
 		if (isAnimate) 
 		{
@@ -299,6 +300,7 @@ void animate(int value)
 				turnGoal = goal;
 				//cout << "turning" << goal << endl;
 				storeOrigPos = 0;
+
 			}
 			else goal = turnGoal;
 			tempAngle = angle1;
@@ -326,51 +328,13 @@ void animate(int value)
 // Initialization routine.
 void setup(void) 
 {
+	Player player1;
 	glClearColor(1.0, 1.0, 1.0, 0.0);  
-	bike = glGenLists(1);
-	glNewList(bike, GL_COMPILE);
-	glPushMatrix();
-	glRotatef(180.0, 0.0, 1.0, 0.0); // make bike point down the z-axis initially
-	//glColor3fv (player1color);  //if player1, one color, if player2 different color
-	//if player 1, this color, if player 2....
-	glScalef(0.5, 1.0, 1.0);
-	glBegin(GL_QUADS);
-	glVertex3f(-1,-1,-1);
-	glVertex3f( 1,-1,-1);
-	glVertex3f( 1, 1,-1);
-	glColor3f (0.0, 0.0, 0.0);
-	glVertex3f(-1, 1,-1);
-	glColor3fv (player1color);
-	 
-	glVertex3f(-1,-1,-1);
-	glVertex3f(-1,-1, 1);
-	glVertex3f(-1, 1, 1);
-	glColor3f (0.0, 0.0, 0.0);
-	glVertex3f(-1, 1,-1);
-	glColor3fv (player1color);
-	 
-	glVertex3f( 1,-1, 1);
-	glVertex3f( 1,-1,-1);
-	glVertex3f( 1, 1,-1);
-	glColor3f (1.0, 0.5, 0.5);
-	glVertex3f( 1, 1, 1);
-	glColor3fv (player1color);
-	 
-	glVertex3f(-1,-1,-1);
-	glVertex3f( 1,-1,-1);
-	glVertex3f( 1,-1, 1);
-	glColor3f (0.5, 0.0, 0.0);
-	glVertex3f(-1,-1, 1);
-	glColor3fv (player1color);
-	 
-	glVertex3f(-1,-1, 1);
-	glVertex3f( 1,-1, 1);
-	glVertex3f( 1, 1, 1);
-	glColor3f (1.0, 0.5, 0.5);
-	glVertex3f(-1, 1, 1);
-	glColor3fv (player1color);
-	glEnd();
+	cat = glGenLists(1);
+	glNewList(cat, GL_COMPILE);
 
+	glPushMatrix();
+	player1.DrawCat();
 	glPopMatrix();
 
 	glEndList();
@@ -441,7 +405,7 @@ void specialKeyInput(int key, int x, int y)
 	if (tempAngle < 0.0) tempAngle += 360.0;
 
 	// Move bike to next position only if there will not be collision
-	if (!BikeCollision(tempxVal, tempzVal, tempAngle) )
+	if (!CatCollision(tempxVal, tempzVal, tempAngle) )
 	{
 		isCollision = 0;
 		xVal1 = tempxVal;

@@ -1,7 +1,14 @@
 //	Player.cpp
-//	Player (bike) class
+//	Player (cat) class
 
 #include "Player.h"
+
+#ifdef __APPLE__
+#  include <GLUT/glut.h>
+#else
+#  include <GL/glut.h>
+#endif
+
 
 Player::Player() {
 	turning = false;
@@ -33,4 +40,39 @@ Point Player::tick() {
 	case 270:
 		break;
 	}
+}
+// 	Player Cat
+void Player::DrawCat(){
+
+	float player1color[3] = {1.0, 0.0, 0.0}; 
+	glRotatef(180.0, 0.0, 1.0, 0.0); // make cat point down the z-axis initially.
+	glScalef(0.5, 1.0, 1.0);
+	glBegin(GL_QUADS);
+	glVertex3f(-1,-1,-1);
+	glVertex3f( 1,-1,-1);
+	glVertex3f( 1, 1,-1);
+	glVertex3f(-1, 1,-1);
+	 
+	glVertex3f(-1,-1,-1);
+	glVertex3f(-1,-1, 1);
+	glVertex3f(-1, 1, 1);
+	glVertex3f(-1, 1,-1);
+	 
+	glVertex3f( 1,-1, 1);
+	glVertex3f( 1,-1,-1);
+	glVertex3f( 1, 1,-1);
+	glVertex3f( 1, 1, 1);
+ 
+	glVertex3f(-1,-1,-1);
+	glVertex3f( 1,-1,-1);
+	glVertex3f( 1,-1, 1);
+	glVertex3f(-1,-1, 1);
+ 
+	glVertex3f(-1,-1, 1);
+	glVertex3f( 1,-1, 1);
+	glVertex3f( 1, 1, 1);
+	glVertex3f(-1, 1, 1);
+
+	glEnd();
+
 }
