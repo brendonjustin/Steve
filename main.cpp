@@ -22,22 +22,21 @@
 
 using namespace std;
 
+// Globals.
 #ifndef M_PI
 static const float M_PI = 3.14159265;
+#endif
+
+#ifndef M_PI_2
 static const float M_PI_2 = 1.57079633;
 #endif
 
-// Globals.
 static float player1color[3] = {1.0, 0.0, 0.0}; 
 static float player2color[3] = {0.0, 0.0, 1.0};
 static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
 
-static float xVal1 = 0, zVal1 = 0; // Co-ordinates of the bike1
-static float xVal2 = 0, zVal2 = 0; // Co-ordinates of the bike2
-static float angle1 = 0.0; // Angle of the bike1
-static float angle2 = 0.0; // Angle of the bike2
-vector<int> path1; //mark start and then every spot turned
-vector<int> path2;
+Player *player1;
+Player *player2;
 
 static unsigned int cat; // Display lists base index.
 
@@ -150,6 +149,10 @@ int CatCollision(float x, float z, float a)
 void drawScene(void)
 {
 	// -- player 1 ----------------------------------------------------
+	Point player1Pt = player1->positions[player1->positions.size() - 1];
+	vector<Point> *player1Pts;
+	player1Pts = &(player1->positions);
+
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -157,12 +160,12 @@ void drawScene(void)
 	glViewport(0, height/2.0, width, height/2.0);
 
 	// Locate the camera behind cat 
-	gluLookAt(xVal1 + 10 * sin( (M_PI/180.0) * angle1), 
+	gluLookAt(player1Pt.x + 10 * sin( player1->direction * M_PI_2), 
 		-4.0, 
-		zVal1+ 10 * cos( (M_PI/180.0) * angle1), 
-		xVal1,
+		player1Pt.z + 10 * cos( player1->direction * M_PI_2), 
+		player1Pt.x,
 		-4.0,
-		zVal1, 
+		player1Pt.z, 
 		0.0, 
 		1.0, 
 		0.0);
@@ -172,10 +175,10 @@ void drawScene(void)
 	drawWallFloors();
 	glPopMatrix();
 
-	//draw bike
+	//draw cat
 	glPushMatrix();
-	glTranslatef(xVal1,-10.0, zVal1);
-	glRotatef(angle1, 0.0, 1.0, 0.0);
+	glTranslatef(player1Pt.x, -10.0, player1Pt.z);
+	glRotatef(player1->direction * 90, 0.0, 1.0, 0.0);
 	glColor3fv(player1color);
 	glCallList(cat);
 	glPopMatrix();
@@ -198,23 +201,53 @@ void drawScene(void)
 	}
 
 	//NyaWall(path1);
-	for(int i=0; i<path1.size(); i=i+3){
-		cout << path1[i] << "  " << path1[i+1] << "  ";
-		glColor3f(0.0, 0.0, 0.0);  
-		glPushMatrix();
-		glBegin(GL_QUADS); 
-		glVertex3f(path1[i], arenaheight, -path1[i+1]);                               
-		glVertex3f(-path1[i], arenaheight, -path1[i+1]);                          
-		glVertex3f(-path1[i], -10, -path1[i+1]);            
-		glVertex3f(path1[i], -10, -path1[i+1]);  
-		glEnd();
-		glPopMatrix();
+	glColor3f(0.0, 0.0, 0.0);
+	glPushMatrix();
+	glBegin(GL_QUADS); 
+
+	for(int i=0; i < player1Pts->size(); ++i) {
+		player1Pt = (*player1Pts)[i];
+
+		cout << player1Pt.x << "  " << player1Pt.z << "  ";
+		glVertex3f(player1Pt.x, arenaheight, -player1Pt.z);
+		glVertex3f(-player1Pt.x, arenaheight, -player1Pt.z);
+		glVertex3f(-player1Pt.x, -10, -player1Pt.z);
+		glVertex3f(player1Pt.x, -10, -player1Pt.z);
 	}
+
+	glEnd();
+	glPopMatrix();
+
 	cout << endl;
-	
+
 	//-- repeat for player 2 ---------------------------------------------
+	Point player2Pt = player2->positions[player2->positions.size() - 1];
+	vector<Point> *player2Pts;
+	player2Pts = &(player2->positions);
+
 	glLoadIdentity();
 	glViewport(0, 0, width, height/2.0);
+
+	// Locate the camera behind cat 
+	gluLookAt(player2Pt.x + 10 * sin( player2->direction * M_PI_2), 
+		-4.0, 
+		player2Pt.z + 10 * cos( player2->direction * M_PI_2), 
+		player2Pt.x,
+		-4.0,
+		player2Pt.z, 
+		0.0, 
+		1.0, 
+		0.0);
+
+	//draw walls and floor
+	glPushMatrix();
+	drawWallFloors();
+	glPopMatrix();
+
+	//draw cat
+	glPushMatrix();
+	glTranslatef(player2Pt.x, -10.0, player2Pt.z);
+	glRotatef(player2->direction * 90, 0.0, 1.0, 0.0);
 
 	//write player 2
 	glPushMatrix();
@@ -223,19 +256,6 @@ void drawScene(void)
 	glRasterPos3f(-28.0, 25.0, 0.0);
 	writeBitmapString((void*)font, (char*)"PLAYER TWO"); 
 
-	// Place camera.
-	gluLookAt(xVal2 + 10 * sin( (M_PI/180.0) * angle2), 
-		-4.0, 
-		zVal2+ 10 * cos( (M_PI/180.0) * angle2), 
-		xVal2,
-		-4.0,
-		zVal2, 
-		0.0, 
-		1.0, 
-		0.0); 
-
-	//draw walls and floor
-	drawWallFloors();
 	if(isCollision){
 		glPushMatrix();
 		glTranslatef(0.0, 0.0, -60);
@@ -252,77 +272,76 @@ void drawScene(void)
 void animate(int value)
 {
 	float goal, tempAngle, stillturn=0;
-	isCollision = CatCollision(xVal1, zVal1, angle1);
+	Point player1Pt = player1->positions[player1->positions.size() - 1];
+
+	isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90);
 	if(!isCollision){
 		if (isAnimate) 
 		{
-			xVal1 = xVal1 - sin(angle1 * M_PI/180.0); 
-			zVal1 = zVal1 - cos(angle1 * M_PI/180.0);
-
-			xVal2 = xVal2 - sin(angle1 * M_PI/180.0); 
-			zVal2 = zVal2 - cos(angle1 * M_PI/180.0);
+			player1->tick();
+			player2->tick();
 		}
-		if (animateLeft)
-		{
-			//dissable right while going left
-			isAnimate=0;
-			if(storeOrigPos)
-			{
-				goal = angle1+90.0;
-				if(goal>360.0){goal = goal-360.0; stillturn=1;}
-				turnGoal = goal;
-				//cout << "turning" << goal << endl;
-				storeOrigPos = 0;
-			}
-			else goal = turnGoal;
-			tempAngle = angle1;
-			if(angle1<goal||stillturn)
-			{	
-				tempAngle=tempAngle+10.0;
-				if (tempAngle > 360.0) tempAngle -= 360.0;
-				if (tempAngle < 0.0) tempAngle += 360.0;
-				angle1 = tempAngle;
-				//cout << goal << "   " << angle << endl;
-			}
-			else
-			{
-				animateLeft = 0;
-				storeOrigPos = 1;
-				isAnimate = 1;
-			}
-		
-		}
-
-		if (animateRight)
-		{
-			isAnimate=0;
-			if(storeOrigPos)
-			{
-				goal = angle1-90.0;
-				if(goal<0.0){goal = goal+360.0; stillturn=1;}
-				turnGoal = goal;
-				//cout << "turning" << goal << endl;
-				storeOrigPos = 0;
-
-			}
-			else goal = turnGoal;
-			tempAngle = angle1;
-			if(angle1>goal||stillturn)
-			{	
-				tempAngle=tempAngle-10.0;
-				if (tempAngle > 360.0) tempAngle -= 360.0;
-				if (tempAngle < 0.0) tempAngle += 360.0;
-				angle1 = tempAngle;
-				//cout << goal << "   " << angle << endl;
-			}
-			else
-			{
-				animateRight = 0;
-				storeOrigPos = 1;
-				isAnimate = 1;
-			}
-		
-		}
+//		if (animateLeft)
+//		{
+//			//dissable right while going left
+//			isAnimate=0;
+//			if(storeOrigPos)
+//			{
+//				goal = angle1+90.0;
+//				if(goal>360.0){goal = goal-360.0; stillturn=1;}
+//				turnGoal = goal;
+//				//cout << "turning" << goal << endl;
+//				storeOrigPos = 0;
+//			}
+//			else goal = turnGoal;
+//			tempAngle = angle1;
+//			if(angle1<goal||stillturn)
+//			{	
+//				tempAngle=tempAngle+10.0;
+//				if (tempAngle > 360.0) tempAngle -= 360.0;
+//				if (tempAngle < 0.0) tempAngle += 360.0;
+//				angle1 = tempAngle;
+//				//cout << goal << "   " << angle << endl;
+//			}
+//			else
+//			{
+//				animateLeft = 0;
+//				storeOrigPos = 1;
+//				isAnimate = 1;
+//			}
+//		
+//		}
+//
+//		if (animateRight)
+//		{
+//			isAnimate=0;
+//			if(storeOrigPos)
+//			{
+//				goal = angle1-90.0;
+//				if(goal<0.0){goal = goal+360.0; stillturn=1;}
+//				turnGoal = goal;
+//				//cout << "turning" << goal << endl;
+//				storeOrigPos = 0;
+//
+//			}
+//			else goal = turnGoal;
+//			tempAngle = angle1;
+//			if(angle1>goal||stillturn)
+//			{	
+//				tempAngle=tempAngle-10.0;
+//				if (tempAngle > 360.0) tempAngle -= 360.0;
+//				if (tempAngle < 0.0) tempAngle += 360.0;
+//				angle1 = tempAngle;
+//				//cout << goal << "   " << angle << endl;
+//			}
+//			else
+//			{
+//				animateRight = 0;
+//				storeOrigPos = 1;
+//				isAnimate = 1;
+//			}
+//		
+//		}
 	}
 	glutTimerFunc(animationPeriod, animate, 1);
 	glutPostRedisplay();
@@ -331,13 +350,15 @@ void animate(int value)
 // Initialization routine.
 void setup(void) 
 {
-	Player player1;
+	player1 = new Player(30, 30, 0);
+	player2 = new Player(80, 80, 1);
+
 	glClearColor(1.0, 1.0, 1.0, 0.0);  
 	cat = glGenLists(1);
 	glNewList(cat, GL_COMPILE);
 
 	glPushMatrix();
-	player1.DrawCat();
+	player1->drawCat();
 	glPopMatrix();
 
 	glEndList();
@@ -371,53 +392,44 @@ void keyInput(unsigned char key, int x, int y)
 // Callback routine for non-ASCII key entry.
 void specialKeyInput(int key, int x, int y)
 {
+	Point player1Pt = player1->positions[player1->positions.size() - 1];
+
 	//need left right for player 1, a and d for player 2?
-	float tempxVal = xVal1, tempzVal = zVal1, tempAngle = angle1, newAngle;
+	float tempxVal = player1Pt.x, tempzVal = player1Pt.z, tempAngle = player1->direction*90;
 
 	p1turn = 0;
 	p2turn = 0;
 	// Compute next position.
 	if (key == GLUT_KEY_LEFT){  
 		animateLeft = 1;
-		p1turn = 1;
-		path1.push_back(xVal1);
-		path1.push_back(zVal1);
+		player1->turn(false);
 	}
 	if (key == GLUT_KEY_RIGHT){
  		animateRight = 1;
-		p1turn = 1;
-		path1.push_back(xVal1);
-		path1.push_back(zVal1);
+		player1->turn(true);
 	}
 
 	if( key == 'a')
 	{
 		animateLeft = 1;
-		p2turn = 1;
-		path2.push_back(xVal2);
-		path2.push_back(zVal2);
+		player2->turn(false);
 	}
 	if( key == 'd')
 	{
 		//animateRight = 1;
 		p2turn = 1;
-		path2.push_back(xVal2);
-		path2.push_back(zVal2);
+		player2->turn(true);
 	}
-
-	// Angle correction.
-	if (tempAngle > 360.0) tempAngle -= 360.0;
-	if (tempAngle < 0.0) tempAngle += 360.0;
 
 	// Move bike to next position only if there will not be collision
 	if (!CatCollision(tempxVal, tempzVal, tempAngle) )
 	{
 		isCollision = 0;
-		xVal1 = tempxVal;
-		zVal1 = tempzVal;
-		angle1 = tempAngle;
 	}
-	else isCollision = 1;
+	else
+	{
+		isCollision = 1;
+	}
 }
 
 // Routine to output interaction instructions to the C++ window.
