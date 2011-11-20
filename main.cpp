@@ -20,14 +20,17 @@
 #  include <GL/glut.h>
 #endif
 
-#define PI 3.14159265
-
 using namespace std;
+
+#ifndef M_PI
+static const float M_PI = 3.14159265;
+static const float M_PI_2 = 1.57079633;
+#endif
 
 // Globals.
 static float player1color[3] = {1.0, 0.0, 0.0}; 
 static float player2color[3] = {0.0, 0.0, 1.0};
-static long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
+static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
 
 static float xVal1 = 0, zVal1 = 0; // Co-ordinates of the bike1
 static float xVal2 = 0, zVal2 = 0; // Co-ordinates of the bike2
@@ -38,9 +41,9 @@ vector<int> path2;
 
 static unsigned int cat; // Display lists base index.
 
-static int arenaheight = 50;
-static int arenawidth = 100;
-static int arenalength = 100;
+static const int arenaheight = 50;
+static const int arenawidth = 100;
+static const int arenalength = 100;
 
 static int isAnimate = 1; // Animated?   //change back to 0 once have the if commands
 static int isCollision = 0;
@@ -53,7 +56,7 @@ static int turnGoal = 0;
 static int animationPeriod = 10; // Time interval between frames.
 static int storeOrigPos = 1;
 
-static int width = 1000, height = 700;
+static const int width = 1000, height = 700;
 
 // Routine to draw a bitmap character string.
 void writeBitmapString(void *font, char *string)
@@ -153,10 +156,10 @@ void drawScene(void)
 	glLoadIdentity();
 	glViewport(0, height/2.0, width, height/2.0);
 
-	// Locate the camera at behind bike
-	gluLookAt(xVal1 + 10 * sin( (PI/180.0) * angle1), 
+	// Locate the camera behind cat 
+	gluLookAt(xVal1 + 10 * sin( (M_PI/180.0) * angle1), 
 		-4.0, 
-		zVal1+ 10 * cos( (PI/180.0) * angle1), 
+		zVal1+ 10 * cos( (M_PI/180.0) * angle1), 
 		xVal1,
 		-4.0,
 		zVal1, 
@@ -221,9 +224,9 @@ void drawScene(void)
 	writeBitmapString((void*)font, (char*)"PLAYER TWO"); 
 
 	// Place camera.
-	gluLookAt(xVal2 + 10 * sin( (PI/180.0) * angle2), 
+	gluLookAt(xVal2 + 10 * sin( (M_PI/180.0) * angle2), 
 		-4.0, 
-		zVal2+ 10 * cos( (PI/180.0) * angle2), 
+		zVal2+ 10 * cos( (M_PI/180.0) * angle2), 
 		xVal2,
 		-4.0,
 		zVal2, 
@@ -253,11 +256,11 @@ void animate(int value)
 	if(!isCollision){
 		if (isAnimate) 
 		{
-			xVal1 = xVal1 - sin(angle1 * PI/180.0); 
-			zVal1 = zVal1 - cos(angle1 * PI/180.0);
+			xVal1 = xVal1 - sin(angle1 * M_PI/180.0); 
+			zVal1 = zVal1 - cos(angle1 * M_PI/180.0);
 
-			xVal2 = xVal2 - sin(angle1 * PI/180.0); 
-			zVal2 = zVal2 - cos(angle1 * PI/180.0);
+			xVal2 = xVal2 - sin(angle1 * M_PI/180.0); 
+			zVal2 = zVal2 - cos(angle1 * M_PI/180.0);
 		}
 		if (animateLeft)
 		{
@@ -371,16 +374,18 @@ void specialKeyInput(int key, int x, int y)
 	//need left right for player 1, a and d for player 2?
 	float tempxVal = xVal1, tempzVal = zVal1, tempAngle = angle1, newAngle;
 
+	p1turn = 0;
+	p2turn = 0;
 	// Compute next position.
 	if (key == GLUT_KEY_LEFT){  
 		animateLeft = 1;
-		p1turn = 1; p2turn = 0;
+		p1turn = 1;
 		path1.push_back(xVal1);
 		path1.push_back(zVal1);
 	}
 	if (key == GLUT_KEY_RIGHT){
  		animateRight = 1;
-		p1turn = 1; p2turn = 0;
+		p1turn = 1;
 		path1.push_back(xVal1);
 		path1.push_back(zVal1);
 	}
@@ -388,14 +393,14 @@ void specialKeyInput(int key, int x, int y)
 	if( key == 'a')
 	{
 		animateLeft = 1;
-		p1turn = 0; p2turn = 1;
+		p2turn = 1;
 		path2.push_back(xVal2);
 		path2.push_back(zVal2);
 	}
 	if( key == 'd')
 	{
 		//animateRight = 1;
-		p1turn = 0; p2turn = 1;
+		p2turn = 1;
 		path2.push_back(xVal2);
 		path2.push_back(zVal2);
 	}
@@ -429,8 +434,10 @@ int main(int argc, char **argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); 
 	glutInitWindowSize(width, height);
 	glutInitWindowPosition(100, 100); 
-	glutCreateWindow ("tron.cpp"); 
+	glutCreateWindow ("steve"); 
+
 	setup(); 
+
 	glutDisplayFunc(drawScene); 
 	glutReshapeFunc(resize);  
 	glutKeyboardFunc(keyInput);
