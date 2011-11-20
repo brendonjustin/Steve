@@ -12,14 +12,25 @@
 
 #ifndef M_PI
 static const float M_PI = 3.14159265;
+#endif
+
+#ifndef M_PI_2
 static const float M_PI_2 = 1.57079633;
 #endif
 
 Player::Player() {
 	turning = false;
+
+	Point initialPt;
+	initialPt.x = 10;
+	initialPt.z = 10;
+
+	positions.push_back(initialPt);
+
+	direction = 0;
 }
 
-Player::Player(float initialX, float initialZ) {
+Player::Player(float initialX, float initialZ, uint8_t initialDirection) {
 	turning = false;
 
 	Point initialPt;
@@ -27,6 +38,8 @@ Player::Player(float initialX, float initialZ) {
 	initialPt.z = initialZ;
 
 	positions.push_back(initialPt);
+
+	direction = initialDirection;
 }
 
 //	Turn (responding to user input)
@@ -69,7 +82,7 @@ Point Player::tick() {
 }
 
 // 	Player Cat
-void Player::DrawCat(){
+void Player::drawCat(){
 
 	float player1color[3] = {1.0, 0.0, 0.0}; 
 	glRotatef(180.0, 0.0, 1.0, 0.0); // make cat point down the z-axis initially.

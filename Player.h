@@ -15,10 +15,10 @@ public:
 	std::vector<Point> positions;
 
 	void turn(bool);
-	void DrawCat();
+	void drawCat();
 	Point tick();
 	Player();
-	Player(float, float);
+	Player(float, float, uint8_t);
 
 private:
 	bool turning;
