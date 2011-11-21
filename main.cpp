@@ -31,6 +31,7 @@ static const float M_PI = 3.14159265;
 static const float M_PI_2 = 1.57079633;
 #endif
 
+static bool paused = false;
 static const bool enablePlayer2 = false;
 
 static float player1color[3] = {1.0, 0.0, 0.0}; 
@@ -40,7 +41,7 @@ static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
 Player *player1;
 Player *player2;
 
-static unsigned int cat; // Display lists base index.
+static unsigned int catList; // Display lists base index.
 
 static const int ARENA_HEIGHT = 500;
 static const int ARENA_WIDTH = 100;
@@ -163,10 +164,10 @@ void drawScene(void)
 	glLoadIdentity();
 	glViewport(0, height/2.0, width, height/2.0);
 
-	// Locate the camera behind cat 
-	gluLookAt(player1Pt.x + 10 * sin( player1->direction * M_PI_2), 
+	// Locate the camera behind, and off to the side, of cat 
+	gluLookAt(player1Pt.x + 15 * sin( player1->direction * M_PI_2) - 6 * cos( player1->direction * M_PI_2), 
 		6.0, 
-		player1Pt.z + 10 * cos( player1->direction * M_PI_2), 
+		player1Pt.z + 15 * cos( player1->direction * M_PI_2) + 6 * sin ( player1->direction * M_PI_2), 
 		player1Pt.x,
 		6.0,
 		player1Pt.z, 
@@ -184,7 +185,7 @@ void drawScene(void)
 	glTranslatef(player1Pt.x, 0, player1Pt.z);
 	glRotatef(player1->direction * 90, 0.0, 1.0, 0.0);
 	glColor3fv(player1color);
-	glCallList(cat);
+	glCallList(catList);
 	glPopMatrix();
 
 	//	write player 1
@@ -235,10 +236,10 @@ void drawScene(void)
 		glLoadIdentity();
 		glViewport(0, 0, width, height/2.0);
 
-		// Locate the camera behind cat 
-		gluLookAt(player2Pt.x + 10 * sin( player2->direction * M_PI_2), 
+		// Locate the camera behind, and off to the side, of cat 
+		gluLookAt(player2Pt.x + 15 * sin( player1->direction * M_PI_2) - 6 * cos( player1->direction * M_PI_2), 
 			6.0, 
-			player2Pt.z + 10 * cos( player2->direction * M_PI_2), 
+			player2Pt.z + 15 * cos( player1->direction * M_PI_2) + 6 * sin ( player1->direction * M_PI_2), 
 			player2Pt.x,
 			6.0,
 			player2Pt.z, 
@@ -282,74 +283,78 @@ void animate(int value)
 	float goal, tempAngle, stillturn=0;
 	Point player1Pt = player1->positions[player1->positions.size() - 1];
 
-	isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90);
-	if(!isCollision){
-		if (isAnimate) 
-		{
-			player1->tick();
-			player2->tick();
+	//	Do nothing if the game is paused
+	if (!paused) {
+		player1->tick();
+		player2->tick();
+
+		isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90);
+		if(!isCollision){
+			if (isAnimate) 
+			{
+			}
+//			if (animateLeft)
+//			{
+//				//dissable right while going left
+//				isAnimate=0;
+//				if(storeOrigPos)
+//				{
+//					goal = angle1+90.0;
+//					if(goal>360.0){goal = goal-360.0; stillturn=1;}
+//					turnGoal = goal;
+//					//cout << "turning" << goal << endl;
+//					storeOrigPos = 0;
+//				}
+//				else goal = turnGoal;
+//				tempAngle = angle1;
+//				if(angle1<goal||stillturn)
+//				{	
+//					tempAngle=tempAngle+10.0;
+//					if (tempAngle > 360.0) tempAngle -= 360.0;
+//					if (tempAngle < 0.0) tempAngle += 360.0;
+//					angle1 = tempAngle;
+//					//cout << goal << "   " << angle << endl;
+//				}
+//				else
+//				{
+//					animateLeft = 0;
+//					storeOrigPos = 1;
+//					isAnimate = 1;
+//				}
+//			
+//			}
+//
+//			if (animateRight)
+//			{
+//				isAnimate=0;
+//				if(storeOrigPos)
+//				{
+//					goal = angle1-90.0;
+//					if(goal<0.0){goal = goal+360.0; stillturn=1;}
+//					turnGoal = goal;
+//					//cout << "turning" << goal << endl;
+//					storeOrigPos = 0;
+//
+//				}
+//				else goal = turnGoal;
+//				tempAngle = angle1;
+//				if(angle1>goal||stillturn)
+//				{	
+//					tempAngle=tempAngle-10.0;
+//					if (tempAngle > 360.0) tempAngle -= 360.0;
+//					if (tempAngle < 0.0) tempAngle += 360.0;
+//					angle1 = tempAngle;
+//					//cout << goal << "   " << angle << endl;
+//				}
+//				else
+//				{
+//					animateRight = 0;
+//					storeOrigPos = 1;
+//					isAnimate = 1;
+//				}
+//			
+//			}
 		}
-//		if (animateLeft)
-//		{
-//			//dissable right while going left
-//			isAnimate=0;
-//			if(storeOrigPos)
-//			{
-//				goal = angle1+90.0;
-//				if(goal>360.0){goal = goal-360.0; stillturn=1;}
-//				turnGoal = goal;
-//				//cout << "turning" << goal << endl;
-//				storeOrigPos = 0;
-//			}
-//			else goal = turnGoal;
-//			tempAngle = angle1;
-//			if(angle1<goal||stillturn)
-//			{	
-//				tempAngle=tempAngle+10.0;
-//				if (tempAngle > 360.0) tempAngle -= 360.0;
-//				if (tempAngle < 0.0) tempAngle += 360.0;
-//				angle1 = tempAngle;
-//				//cout << goal << "   " << angle << endl;
-//			}
-//			else
-//			{
-//				animateLeft = 0;
-//				storeOrigPos = 1;
-//				isAnimate = 1;
-//			}
-//		
-//		}
-//
-//		if (animateRight)
-//		{
-//			isAnimate=0;
-//			if(storeOrigPos)
-//			{
-//				goal = angle1-90.0;
-//				if(goal<0.0){goal = goal+360.0; stillturn=1;}
-//				turnGoal = goal;
-//				//cout << "turning" << goal << endl;
-//				storeOrigPos = 0;
-//
-//			}
-//			else goal = turnGoal;
-//			tempAngle = angle1;
-//			if(angle1>goal||stillturn)
-//			{	
-//				tempAngle=tempAngle-10.0;
-//				if (tempAngle > 360.0) tempAngle -= 360.0;
-//				if (tempAngle < 0.0) tempAngle += 360.0;
-//				angle1 = tempAngle;
-//				//cout << goal << "   " << angle << endl;
-//			}
-//			else
-//			{
-//				animateRight = 0;
-//				storeOrigPos = 1;
-//				isAnimate = 1;
-//			}
-//		
-//		}
 	}
 	glutTimerFunc(animationPeriod, animate, 1);
 	glutPostRedisplay();
@@ -362,8 +367,8 @@ void setup(void)
 	player2 = new Player(80, 80, 1);
 
 	glClearColor(1.0, 1.0, 1.0, 0.0);  
-	cat = glGenLists(1);
-	glNewList(cat, GL_COMPILE);
+	catList = glGenLists(1);
+	glNewList(catList, GL_COMPILE);
 
 	glPushMatrix();
 	player1->drawCat();
@@ -389,51 +394,43 @@ void resize(int w, int h)
 // Keyboard input processing routine.
 void keyInput(unsigned char key, int x, int y)
 {
-	cout << key << " pressed." << endl;
+	p1turn = 0;
+	p2turn = 0;
 	switch(key) {
 	case 27:
+		// esc key
 		exit(0);
 		break;         
 	case 'a':
 		animateLeft = 1;
-		player2->turn(false);
+		p1turn = 1;
+		player1->turn(false);
 		break;
 	case 'd':
-		//animateRight = 1;
-		p2turn = 1;
-		player2->turn(true);
+		animateRight = 1;
+		p1turn = 1;
+		player1->turn(true);
+		break;
+	case 32:
+		// space key
+		paused = !paused;
 	}
-
 }
 
 // Callback routine for non-ASCII key entry.
 void specialKeyInput(int key, int x, int y)
 {
-	Point player1Pt = player1->positions[player1->positions.size() - 1];
-
-	//need left right for player 1, a and d for player 2?
-	float tempxVal = player1Pt.x, tempzVal = player1Pt.z, tempAngle = player1->direction*90;
-
-	p1turn = 0;
-	p2turn = 0;
 	// Compute next position.
-	if (key == GLUT_KEY_LEFT){  
-		animateLeft = 1;
-		player1->turn(false);
-	}
-	if (key == GLUT_KEY_RIGHT){
- 		animateRight = 1;
-		player1->turn(true);
-	}
 
-	// Move bike to next position only if there will not be collision
-	if (!CatCollision(tempxVal, tempzVal, tempAngle) )
-	{
-		isCollision = 0;
-	}
-	else
-	{
-		isCollision = 1;
+	switch(key) {
+	case GLUT_KEY_LEFT: 
+		animateLeft = 1;
+		player2->turn(false);
+		break;
+	case GLUT_KEY_RIGHT:
+ 		animateRight = 1;
+		player2->turn(true);
+		break;
 	}
 }
 
