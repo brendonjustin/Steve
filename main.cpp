@@ -32,6 +32,7 @@ static const float M_PI_2 = 1.57079633;
 #endif
 
 static const bool enablePlayer2 = false;
+
 static float player1color[3] = {1.0, 0.0, 0.0}; 
 static float player2color[3] = {0.0, 0.0, 1.0};
 static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
@@ -41,9 +42,11 @@ Player *player2;
 
 static unsigned int cat; // Display lists base index.
 
-static const int arenaheight = 50;
-static const int arenawidth = 100;
-static const int arenalength = 100;
+static const int ARENA_HEIGHT = 500;
+static const int ARENA_WIDTH = 100;
+static const int ARENA_LENGTH = 100;
+
+static const unsigned int TRAIL_HEIGHT = 10;
 
 static int isAnimate = 1; // Animated?   //change back to 0 once have the if commands
 static int isCollision = 0;
@@ -70,42 +73,42 @@ void drawWallFloors ()
 	// Draw walls of arena
 	glColor3f(0.0, 0.0, 0.8);
 	glBegin(GL_QUADS); 
-	glVertex3f(arenawidth, arenaheight, -arenalength);                               
-	glVertex3f(-arenawidth, arenaheight, -arenalength);                          
-	glVertex3f(-arenawidth, -10, -arenalength); 
+	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);                               
+	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);                          
+	glVertex3f(-ARENA_WIDTH, -10, -ARENA_LENGTH); 
 	glColor3f(0.0, 0.0, 0.4);             
-	glVertex3f(arenawidth, -10, -arenalength);
+	glVertex3f(ARENA_WIDTH, -10, -ARENA_LENGTH);
 	glColor3f(0.0, 0.0, 0.8);       
 
-	glVertex3f(arenawidth, arenaheight, arenalength);  
-	glVertex3f(-arenawidth, arenaheight, arenalength);                          
-	glVertex3f(-arenawidth, -10, arenalength);   
+	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);  
+	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                          
+	glVertex3f(-ARENA_WIDTH, -10, ARENA_LENGTH);   
 	glColor3f(0.0, 0.0, 0.4);              
-	glVertex3f(arenawidth, -10, arenalength);  
+	glVertex3f(ARENA_WIDTH, -10, ARENA_LENGTH);  
 	glColor3f(0.0, 0.0, 0.8);         
 
-	glVertex3f(-arenawidth, arenaheight, -arenalength);  
-	glVertex3f(-arenawidth, arenaheight, arenalength);                         
-	glVertex3f(-arenawidth, -10, arenalength); 
+	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);  
+	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                         
+	glVertex3f(-ARENA_WIDTH, -10, ARENA_LENGTH); 
 	glColor3f(0.0, 0.0, 0.4);               
-	glVertex3f(-arenawidth, -10, -arenalength);  
+	glVertex3f(-ARENA_WIDTH, -10, -ARENA_LENGTH);  
 	glColor3f(0.0, 0.0, 0.8);  
 
-	glVertex3f(arenawidth, arenaheight, -arenalength);  
-	glVertex3f(arenawidth, arenaheight, arenalength);                         
-	glVertex3f(arenawidth, -10, arenalength);   
+	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);  
+	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                         
+	glVertex3f(ARENA_WIDTH, -10, ARENA_LENGTH);   
 	glColor3f(0.0, 0.0, 0.4);             
-	glVertex3f(arenawidth, -10, -arenalength);   
+	glVertex3f(ARENA_WIDTH, -10, -ARENA_LENGTH);   
 	glColor3f(0.0, 0.0, 0.8);           
 	glEnd(); 
 
 	// tron lit floor
 	glColor3f(0.3, 0.3, 0.8);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	for(float z=-arenalength; z<arenalength; z+=2.0)
+	for(float z=-ARENA_LENGTH; z<ARENA_LENGTH; z+=2.0)
 	{
 		glBegin(GL_QUADS);
-		for(float x=-arenawidth; x<arenawidth; x+=2.0)
+		for(float x=-ARENA_WIDTH; x<ARENA_WIDTH; x+=2.0)
 		{
 			glVertex3f(x, -10, z);                               
 			glVertex3f(x+2, -10, z);                               
@@ -117,15 +120,15 @@ void drawWallFloors ()
 	//make lines for walls too
 	/*glColor3f(1.0, 1.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	for(float z=-arenalength; z<arenalength; z+=2.0)
+	for(float z=-ARENA_LENGTH; z<ARENA_LENGTH; z+=2.0)
 	{
 		glBegin(GL_QUADS);
-		for(float y=-arenaheight; y<arenaheight; y+=2.0)
+		for(float y=-ARENA_HEIGHT; y<ARENA_HEIGHT; y+=2.0)
 		{
-			glVertex3f(arenawidth, y, z);                               
-			glVertex3f(arenawidth, y+2, z);                               
-			glVertex3f(arenawidth, y+2, z+2);                               
-			glVertex3f(arenawidth, y, z+2);                               
+			glVertex3f(ARENA_WIDTH, y, z);                               
+			glVertex3f(ARENA_WIDTH, y+2, z);                               
+			glVertex3f(ARENA_WIDTH, y+2, z+2);                               
+			glVertex3f(ARENA_WIDTH, y, z+2);                               
 		}
 		glEnd();
 	}*/
@@ -135,11 +138,11 @@ void drawWallFloors ()
 int CatCollision(float x, float z, float a)
 {
 	// Check for collision with all walls
-	if(x < (-arenawidth+1.0) || x > (arenawidth-1.0)){
+	if(x < (-ARENA_WIDTH+1.0) || x > (ARENA_WIDTH-1.0)){
 		return 1;
 	}
 
-	if(z < (-arenalength+1.0) || z > (arenalength-1.0)){
+	if(z < (-ARENA_LENGTH+1.0) || z > (ARENA_LENGTH-1.0)){
 		return 1;
 	}
 
@@ -171,12 +174,12 @@ void drawScene(void)
 		1.0, 
 		0.0);
 
-	//draw walls and floor
+	//	draw walls and floor
 	glPushMatrix();
 	drawWallFloors();
 	glPopMatrix();
 
-	//draw cat
+	//	draw cat
 	glPushMatrix();
 	glTranslatef(player1Pt.x, -10.0, player1Pt.z);
 	glRotatef(player1->direction * 90, 0.0, 1.0, 0.0);
@@ -184,13 +187,13 @@ void drawScene(void)
 	glCallList(cat);
 	glPopMatrix();
 
-	//write player 1
-	glPushMatrix();
-	glTranslatef(0.0, 0.0, -30.0);
-	glColor3fv(player1color);
-	glRasterPos3f(-28.0, 25.0, 0.0);
-	writeBitmapString((void*)font, (char*)"PLAYER ONE"); 
-	glPopMatrix();
+	//	write player 1
+	//glPushMatrix();
+	//glTranslatef(0.0, 0.0, -30.0);
+	//glColor3fv(player1color);
+	//glRasterPos3f(-28.0, 25.0, 0.0);
+	//writeBitmapString((void*)font, (char*)"PLAYER ONE"); 
+	//glPopMatrix();
 
 	if(isCollision){
 		glPushMatrix();
@@ -204,16 +207,18 @@ void drawScene(void)
 	//NyaWall(path1);
 	glColor3f(0.0, 0.0, 0.0);
 	glPushMatrix();
+	glColor3fv(player1color);
 	glBegin(GL_QUADS); 
 
-	for(int i=0; i < player1Pts->size(); ++i) {
+	for(int i=0; i < player1Pts->size() - 1; ++i) {
 		player1Pt = (*player1Pts)[i];
 
 		//cout << player1Pt.x << "  " << player1Pt.z << "  ";
-		glVertex3f(player1Pt.x, arenaheight, -player1Pt.z);
-		glVertex3f(-player1Pt.x, arenaheight, -player1Pt.z);
-		glVertex3f(-player1Pt.x, -10, -player1Pt.z);
-		glVertex3f(player1Pt.x, -10, -player1Pt.z);
+		//	Top left, top right, bottom right, bottom left
+		glVertex3f(player1Pt.x, TRAIL_HEIGHT, player1Pt.z);
+		glVertex3f((*player1Pts)[i+1].x, TRAIL_HEIGHT, (*player1Pts)[i+1].z);
+		glVertex3f((*player1Pts)[i+1].x, -10, (*player1Pts)[i+1].z);
+		glVertex3f(player1Pt.x, -10, player1Pt.z);
 	}
 
 	glEnd();
@@ -376,7 +381,7 @@ void resize(int w, int h)
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h); 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
+	glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 1000.0);
 
 	glMatrixMode(GL_MODELVIEW);
 }
