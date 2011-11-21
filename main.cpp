@@ -237,10 +237,10 @@ void drawScene(void)
 
 		// Locate the camera behind cat 
 		gluLookAt(player2Pt.x + 10 * sin( player2->direction * M_PI_2), 
-			4.0, 
+			6.0, 
 			player2Pt.z + 10 * cos( player2->direction * M_PI_2), 
 			player2Pt.x,
-			4.0,
+			6.0,
 			player2Pt.z, 
 			0.0, 
 			1.0, 
