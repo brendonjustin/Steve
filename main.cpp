@@ -31,6 +31,7 @@ static const float M_PI = 3.14159265;
 static const float M_PI_2 = 1.57079633;
 #endif
 
+static const bool enablePlayer2 = false;
 static float player1color[3] = {1.0, 0.0, 0.0}; 
 static float player2color[3] = {0.0, 0.0, 1.0};
 static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
@@ -208,7 +209,7 @@ void drawScene(void)
 	for(int i=0; i < player1Pts->size(); ++i) {
 		player1Pt = (*player1Pts)[i];
 
-		cout << player1Pt.x << "  " << player1Pt.z << "  ";
+		//cout << player1Pt.x << "  " << player1Pt.z << "  ";
 		glVertex3f(player1Pt.x, arenaheight, -player1Pt.z);
 		glVertex3f(-player1Pt.x, arenaheight, -player1Pt.z);
 		glVertex3f(-player1Pt.x, -10, -player1Pt.z);
@@ -218,43 +219,45 @@ void drawScene(void)
 	glEnd();
 	glPopMatrix();
 
-	cout << endl;
+	//cout << endl;
 
 	//-- repeat for player 2 ---------------------------------------------
-	Point player2Pt = player2->positions[player2->positions.size() - 1];
-	vector<Point> *player2Pts;
-	player2Pts = &(player2->positions);
+	if (enablePlayer2) {
+		Point player2Pt = player2->positions[player2->positions.size() - 1];
+		vector<Point> *player2Pts;
+		player2Pts = &(player2->positions);
 
-	glLoadIdentity();
-	glViewport(0, 0, width, height/2.0);
+		glLoadIdentity();
+		glViewport(0, 0, width, height/2.0);
 
-	// Locate the camera behind cat 
-	gluLookAt(player2Pt.x + 10 * sin( player2->direction * M_PI_2), 
-		-4.0, 
-		player2Pt.z + 10 * cos( player2->direction * M_PI_2), 
-		player2Pt.x,
-		-4.0,
-		player2Pt.z, 
-		0.0, 
-		1.0, 
-		0.0);
+		// Locate the camera behind cat 
+		gluLookAt(player2Pt.x + 10 * sin( player2->direction * M_PI_2), 
+			-4.0, 
+			player2Pt.z + 10 * cos( player2->direction * M_PI_2), 
+			player2Pt.x,
+			-4.0,
+			player2Pt.z, 
+			0.0, 
+			1.0, 
+			0.0);
 
-	//draw walls and floor
-	glPushMatrix();
-	drawWallFloors();
-	glPopMatrix();
+		//draw walls and floor
+		glPushMatrix();
+		drawWallFloors();
+		glPopMatrix();
 
-	//draw cat
-	glPushMatrix();
-	glTranslatef(player2Pt.x, -10.0, player2Pt.z);
-	glRotatef(player2->direction * 90, 0.0, 1.0, 0.0);
+		//draw cat
+		glPushMatrix();
+		glTranslatef(player2Pt.x, -10.0, player2Pt.z);
+		glRotatef(player2->direction * 90, 0.0, 1.0, 0.0);
 
-	//write player 2
-	glPushMatrix();
-	glTranslatef(0.0, 0.0, -30.0);
-	glColor3fv(player1color);
-	glRasterPos3f(-28.0, 25.0, 0.0);
-	writeBitmapString((void*)font, (char*)"PLAYER TWO"); 
+		//write player 2
+		glPushMatrix();
+		glTranslatef(0.0, 0.0, -30.0);
+		glColor3fv(player1color);
+		glRasterPos3f(-28.0, 25.0, 0.0);
+		writeBitmapString((void*)font, (char*)"PLAYER TWO"); 
+	}
 
 	if(isCollision){
 		glPushMatrix();
@@ -381,12 +384,21 @@ void resize(int w, int h)
 // Keyboard input processing routine.
 void keyInput(unsigned char key, int x, int y)
 {
-	switch(key) 
-	{
+	cout << key << " pressed." << endl;
+	switch(key) {
 	case 27:
 		exit(0);
 		break;         
+	case 'a':
+		animateLeft = 1;
+		player2->turn(false);
+		break;
+	case 'd':
+		//animateRight = 1;
+		p2turn = 1;
+		player2->turn(true);
 	}
+
 }
 
 // Callback routine for non-ASCII key entry.
@@ -407,18 +419,6 @@ void specialKeyInput(int key, int x, int y)
 	if (key == GLUT_KEY_RIGHT){
  		animateRight = 1;
 		player1->turn(true);
-	}
-
-	if( key == 'a')
-	{
-		animateLeft = 1;
-		player2->turn(false);
-	}
-	if( key == 'd')
-	{
-		//animateRight = 1;
-		p2turn = 1;
-		player2->turn(true);
 	}
 
 	// Move bike to next position only if there will not be collision

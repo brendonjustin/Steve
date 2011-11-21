@@ -58,14 +58,16 @@ void Player::turn(bool turnRight) {
 
 		direction = direction % 4;
 	}
+
+	turning = false;
 }
 
 //	Move the player 
 Point Player::tick() {
 	Point currentPt = positions[positions.size() - 1];
 
-	currentPt.x -= sin(direction * M_PI_2);
-	currentPt.z -= cos(direction * M_PI_2);
+	currentPt.x -= sin(direction * M_PI_2) / 10;
+	currentPt.z -= cos(direction * M_PI_2) / 10;
 
 	switch (direction) {
 	case 0:
