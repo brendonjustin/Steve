@@ -110,10 +110,10 @@ void drawWallFloors ()
 		glBegin(GL_QUADS);
 		for(float x=-ARENA_WIDTH; x<ARENA_WIDTH; x+=2.0)
 		{
-			glVertex3f(x, -10, z);                               
-			glVertex3f(x+2, -10, z);                               
-			glVertex3f(x+2, -10, z+2);                               
-			glVertex3f(x, -10, z+2);                               
+			glVertex3f(x, 0, z);                               
+			glVertex3f(x+2, 0, z);                               
+			glVertex3f(x+2, 0, z+2);                               
+			glVertex3f(x, 0, z+2);                               
 		}
 		glEnd();
 	}
@@ -165,10 +165,10 @@ void drawScene(void)
 
 	// Locate the camera behind cat 
 	gluLookAt(player1Pt.x + 10 * sin( player1->direction * M_PI_2), 
-		-4.0, 
+		6.0, 
 		player1Pt.z + 10 * cos( player1->direction * M_PI_2), 
 		player1Pt.x,
-		-4.0,
+		6.0,
 		player1Pt.z, 
 		0.0, 
 		1.0, 
@@ -181,7 +181,7 @@ void drawScene(void)
 
 	//	draw cat
 	glPushMatrix();
-	glTranslatef(player1Pt.x, -10.0, player1Pt.z);
+	glTranslatef(player1Pt.x, 0, player1Pt.z);
 	glRotatef(player1->direction * 90, 0.0, 1.0, 0.0);
 	glColor3fv(player1color);
 	glCallList(cat);
@@ -237,10 +237,10 @@ void drawScene(void)
 
 		// Locate the camera behind cat 
 		gluLookAt(player2Pt.x + 10 * sin( player2->direction * M_PI_2), 
-			-4.0, 
+			4.0, 
 			player2Pt.z + 10 * cos( player2->direction * M_PI_2), 
 			player2Pt.x,
-			-4.0,
+			4.0,
 			player2Pt.z, 
 			0.0, 
 			1.0, 
@@ -253,7 +253,7 @@ void drawScene(void)
 
 		//draw cat
 		glPushMatrix();
-		glTranslatef(player2Pt.x, -10.0, player2Pt.z);
+		glTranslatef(player2Pt.x, 0, player2Pt.z);
 		glRotatef(player2->direction * 90, 0.0, 1.0, 0.0);
 
 		//write player 2
