@@ -47,7 +47,11 @@ static const int ARENA_HEIGHT = 500;
 static const int ARENA_WIDTH = 100;
 static const int ARENA_LENGTH = 100;
 
-static const unsigned int TRAIL_HEIGHT = 10;
+static const unsigned int TRAIL_HEIGHT = 6;
+
+static const unsigned int CAM_BACK_DIST = 15;
+static const unsigned int CAM_DIAG_LEFT_DIST = 8;
+static const unsigned int CAM_DIAG_UP_DIST = 15;
 
 static int isAnimate = 1; // Animated?   //change back to 0 once have the if commands
 static int isCollision = 0;
@@ -165,11 +169,11 @@ void drawScene(void)
 	glViewport(0, height/2.0, width, height/2.0);
 
 	// Locate the camera behind, and off to the side, of cat 
-	gluLookAt(player1Pt.x + 15 * sin( player1->direction * M_PI_2) - 6 * cos( player1->direction * M_PI_2), 
-		6.0, 
-		player1Pt.z + 15 * cos( player1->direction * M_PI_2) + 6 * sin ( player1->direction * M_PI_2), 
+	gluLookAt(player1Pt.x + CAM_BACK_DIST * sin( player1->direction * M_PI_2) - CAM_DIAG_LEFT_DIST * cos( player1->direction * M_PI_2), 
+		CAM_DIAG_UP_DIST, 
+		player1Pt.z + CAM_BACK_DIST * cos( player1->direction * M_PI_2) + CAM_DIAG_LEFT_DIST * sin ( player1->direction * M_PI_2), 
 		player1Pt.x,
-		6.0,
+		CAM_DIAG_UP_DIST - 8,
 		player1Pt.z, 
 		0.0, 
 		1.0, 
@@ -237,11 +241,11 @@ void drawScene(void)
 		glViewport(0, 0, width, height/2.0);
 
 		// Locate the camera behind, and off to the side, of cat 
-		gluLookAt(player2Pt.x + 15 * sin( player1->direction * M_PI_2) - 6 * cos( player1->direction * M_PI_2), 
-			6.0, 
-			player2Pt.z + 15 * cos( player1->direction * M_PI_2) + 6 * sin ( player1->direction * M_PI_2), 
+		gluLookAt(player2Pt.x + CAM_BACK_DIST * sin( player1->direction * M_PI_2) - CAM_DIAG_LEFT_DIST * cos( player1->direction * M_PI_2), 
+			CAM_DIAG_UP_DIST, 
+			player2Pt.z + CAM_BACK_DIST * cos( player1->direction * M_PI_2) + CAM_DIAG_LEFT_DIST * sin ( player1->direction * M_PI_2), 
 			player2Pt.x,
-			6.0,
+			CAM_DIAG_UP_DIST - 8,
 			player2Pt.z, 
 			0.0, 
 			1.0, 
