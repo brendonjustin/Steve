@@ -1,17 +1,16 @@
 //	Taken from the OpenGL Wikibook: http://en.wikibooks.org/wiki/OpenGL_Programming/Intermediate/Textures#A_simple_libpng_example
 
-#include <png.h>
 #include <cstdio>
 #include <string>
 
 #ifdef __APPLE__
-#  include <GLUT/gl.h>
-#  include <GLUT/glu.h>
-#  include <GLUT/glut.h>
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
+#  include "/usr/X11/include/png.h"
 #else
 #  include <GL/gl.h>
 #  include <GL/glu.h>
-#  include <GL/glut.h>
+#  include <png.h>
 #endif
 
 #define TEXTURE_LOAD_ERROR 0
