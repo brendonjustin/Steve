@@ -1,0 +1,5 @@
+Compiling on Linux:
+(TBD)
+
+Compiling on OS X:
+g++ main.cpp Player.cpp -framework OpenGL -framework Glut -L/usr/X11/lib -lpng15 -o steve
