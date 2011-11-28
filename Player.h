@@ -2,6 +2,7 @@
 //	Player (nyancat) class
 
 #include <vector>
+#include <cstdint>
 
 struct Point {
 	float x;
