@@ -2,7 +2,11 @@
 //	Player (nyancat) class
 
 #include <vector>
-#include <cstdint>
+#ifdef __APPLE__
+#  include <stdint.h>
+#else
+#  include <cstdint>
+#endif
 
 struct Point {
 	float x;
@@ -23,5 +27,6 @@ public:
 
 private:
 	bool turning;
+	void init(float, float, uint8_t);
 };
 

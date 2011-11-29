@@ -19,24 +19,21 @@ static const float M_PI_2 = 1.57079633;
 #endif
 
 Player::Player() {
-	turning = false;
-
-	Point initialPt;
-	initialPt.x = 10;
-	initialPt.z = 10;
-
-	positions.push_back(initialPt);
-
-	direction = 0;
+	this->init(10, 10, 0);
 }
 
 Player::Player(float initialX, float initialZ, uint8_t initialDirection) {
+	this->init(initialX, initialZ, initialDirection);
+}
+
+void Player::init(float initialX, float initialZ, uint8_t initialDirection) {
 	turning = false;
 
 	Point initialPt;
 	initialPt.x = initialX;
 	initialPt.z = initialZ;
 
+	positions.push_back(initialPt);
 	positions.push_back(initialPt);
 
 	direction = initialDirection;

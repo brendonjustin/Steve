@@ -164,6 +164,7 @@ void drawScene(void)
 {
 	// -- player 1 ----------------------------------------------------
 	Point player1Pt = player1->positions[player1->positions.size() - 1];
+	Point player1Pt2;
 	vector<Point> *player1Pts;
 	player1Pts = &(player1->positions);
 
@@ -222,12 +223,13 @@ void drawScene(void)
 
 	for(int i=0; i < player1Pts->size() - 1; ++i) {
 		player1Pt = (*player1Pts)[i];
+		player1Pt2 = (*player1Pts)[i+1];
 
 		//cout << player1Pt.x << "  " << player1Pt.z << "  ";
 		//	Top left, top right, bottom right, bottom left
 		glVertex3f(player1Pt.x, TRAIL_HEIGHT, player1Pt.z);
-		glVertex3f((*player1Pts)[i+1].x, TRAIL_HEIGHT, (*player1Pts)[i+1].z);
-		glVertex3f((*player1Pts)[i+1].x, -10, (*player1Pts)[i+1].z);
+		glVertex3f(player1Pt2.x, TRAIL_HEIGHT, player1Pt2.z);
+		glVertex3f(player1Pt2.x, -10, player1Pt2.z);
 		glVertex3f(player1Pt.x, -10, player1Pt.z);
 	}
 
