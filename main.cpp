@@ -50,9 +50,9 @@ static const int ARENA_LENGTH = 100;
 
 static const unsigned int TRAIL_HEIGHT = 6;
 
-static const unsigned int CAM_BACK_DIST = 15;
-static const unsigned int CAM_DIAG_LEFT_DIST = 8;
-static const unsigned int CAM_DIAG_UP_DIST = 15;
+static const unsigned int CAM_BACK_DIST = 3;
+static const unsigned int CAM_DIAG_LEFT_DIST = 2;
+static const unsigned int CAM_DIAG_UP_DIST = 10;
 
 static int isAnimate = 1; // Animated?   //change back to 0 once have the if commands
 static int isCollision = 0;
@@ -402,7 +402,8 @@ void resize(int w, int h)
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h); 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 1000.0);
+	//glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 1000.0);
+	glOrtho(-25.0, 25.0, -25.0, 25.0, 0.0, 1000.0);
 
 	glMatrixMode(GL_MODELVIEW);
 }
