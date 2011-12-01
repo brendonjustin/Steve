@@ -2,6 +2,7 @@
 //	Player (cat) class
 
 #include "Player.h"
+#include "png_loader.h"
 #include <cmath>
 
 #ifdef __APPLE__
@@ -18,12 +19,23 @@ static const float M_PI = 3.14159265;
 static const float M_PI_2 = 1.57079633;
 #endif
 
+static const string NYAN_TEXTURE = "frame00.png";
+static int tex_width = 400, tex_height = 280;
+
 Player::Player() {
 	this->init(10, 10, 0);
 }
 
 Player::Player(float initialX, float initialZ, uint8_t initialDirection) {
 	this->init(initialX, initialZ, initialDirection);
+
+	//	Load the nyan cat!
+	texture = loadTexture(NYAN_TEXTURE, tex_width, tex_height);
+
+	//	Handle errors
+	if (texture == 0) {
+		// TODO
+	}
 }
 
 void Player::init(float initialX, float initialZ, uint8_t initialDirection) {
@@ -85,33 +97,59 @@ void Player::drawCat(){
 
 	float player1color[3] = {1.0, 0.0, 0.0}; 
 	glRotatef(180.0, 0.0, 1.0, 0.0); // make cat point down the z-axis initially.
-	glScalef(0.5, 1.0, 1.0);
+	//glScalef(0.5, 1.0, 1.0);
+
+	glEnable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glBegin(GL_QUADS);
+
+	//	unknown
+	//glTexCoord2f(0.0, 0.0); glVertex3f(-1,-1,-1);
+	//glTexCoord2f(0.0, 1.0); glVertex3f( 1,-1,-1);
+	//glTexCoord2f(1.0, 1.0); glVertex3f( 1, 1,-1);
+	//glTexCoord2f(1.0, 0.0); glVertex3f(-1, 1,-1);
+	 
 	glVertex3f(-1,-1,-1);
 	glVertex3f( 1,-1,-1);
 	glVertex3f( 1, 1,-1);
 	glVertex3f(-1, 1,-1);
-	 
+
+	//	Top?
 	glVertex3f(-1,-1,-1);
 	glVertex3f(-1,-1, 1);
 	glVertex3f(-1, 1, 1);
 	glVertex3f(-1, 1,-1);
 	 
+	//	unknown
+	//glTexCoord2f(0.0, 0.0); glVertex3f( 1,-1, 1);
+	//glTexCoord2f(0.0, 1.0); glVertex3f( 1,-1,-1);
+	//glTexCoord2f(1.0, 1.0); glVertex3f( 1, 1,-1);
+	//glTexCoord2f(1.0, 0.0); glVertex3f( 1, 1, 1);
+ 
 	glVertex3f( 1,-1, 1);
 	glVertex3f( 1,-1,-1);
 	glVertex3f( 1, 1,-1);
 	glVertex3f( 1, 1, 1);
+
+	//	Left side?
+	glTexCoord2f(0.0, 0.0); glVertex3f(-1,-1,-1);
+	glTexCoord2f(0.0, 1.0); glVertex3f( 1,-1,-1);
+	glTexCoord2f(1.0, 1.0); glVertex3f( 1,-1, 1);
+	glTexCoord2f(1.0, 0.0); glVertex3f(-1,-1, 1);
  
-	glVertex3f(-1,-1,-1);
-	glVertex3f( 1,-1,-1);
-	glVertex3f( 1,-1, 1);
-	glVertex3f(-1,-1, 1);
- 
+ 	//	unknown
+	//glTexCoord2f(0.0, 0.0); glVertex3f(-1,-1, 1);
+	//glTexCoord2f(0.0, 1.0); glVertex3f( 1,-1, 1);
+	//glTexCoord2f(1.0, 1.0); glVertex3f( 1, 1, 1);
+	//glTexCoord2f(1.0, 0.0); glVertex3f(-1, 1, 1);
+
 	glVertex3f(-1,-1, 1);
 	glVertex3f( 1,-1, 1);
 	glVertex3f( 1, 1, 1);
 	glVertex3f(-1, 1, 1);
 
 	glEnd();
-
+	glFlush();
+	glDisable(GL_TEXTURE_2D);
 }

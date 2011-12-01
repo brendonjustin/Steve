@@ -13,7 +13,6 @@
 #include <fstream>
 
 #include "Player.h"
-#include "png_loader.h"
 
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
@@ -64,10 +63,6 @@ static int turnGoal = 0;
 
 static int animationPeriod = 10; // Time interval between frames.
 static int storeOrigPos = 1;
-
-static GLuint texture;
-static const string NYAN_TEXTURE = "nyan_cat.png";
-static int tex_width = 512, tex_height = 512;
 
 static const int width = 1000, height = 700;
 
@@ -386,14 +381,6 @@ void setup(void)
 	glPopMatrix();
 
 	glEndList();
-
-	//	Load the nyan cat!
-	texture = loadTexture(NYAN_TEXTURE, tex_width, tex_height);
-
-	//	Handle errors
-	if (texture == 0) {
-		// TODO
-	}
 }
 
 // OpenGL window reshape routine.
