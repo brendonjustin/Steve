@@ -94,10 +94,13 @@ Point Player::tick() {
 
 // 	Player Cat
 void Player::drawCat(){
+	float left, top, fwd;
+	left = 0.05;
+	top = 5;
+	fwd = 1;
 
 	float player1color[3] = {1.0, 0.0, 0.0}; 
 	glRotatef(180.0, 0.0, 1.0, 0.0); // make cat point down the z-axis initially.
-	//glScalef(0.5, 1.0, 1.0);
 
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
@@ -105,49 +108,44 @@ void Player::drawCat(){
 	glBegin(GL_QUADS);
 
 	//	unknown
-	//glTexCoord2f(0.0, 0.0); glVertex3f(-1,-1,-1);
-	//glTexCoord2f(0.0, 1.0); glVertex3f( 1,-1,-1);
-	//glTexCoord2f(1.0, 1.0); glVertex3f( 1, 1,-1);
-	//glTexCoord2f(1.0, 0.0); glVertex3f(-1, 1,-1);
+	//glTexCoord2f(0.0, 0.0); glVertex3f(-left,0,0);
+	//glTexCoord2f(0.0, 1.0); glVertex3f( left,0,0);
+	//glTexCoord2f(1.0, 1.0); glVertex3f( left, top,0);
+	//glTexCoord2f(1.0, 0.0); glVertex3f(-left, top,0);
 	 
-	glVertex3f(-1,-1,-1);
-	glVertex3f( 1,-1,-1);
-	glVertex3f( 1, 1,-1);
-	glVertex3f(-1, 1,-1);
+	glVertex3f(-left,   0,   0);
+	glVertex3f( left,   0,   0);
+	glVertex3f( left, top,   0);
+	glVertex3f(-left, top,   0);
 
 	//	Top?
-	glVertex3f(-1,-1,-1);
-	glVertex3f(-1,-1, 1);
-	glVertex3f(-1, 1, 1);
-	glVertex3f(-1, 1,-1);
+	glVertex3f(-left,   0,   0);
+	glVertex3f(-left,   0, fwd);
+	glVertex3f(-left, top, fwd);
+	glVertex3f(-left, top,   0);
 	 
-	//	unknown
-	//glTexCoord2f(0.0, 0.0); glVertex3f( 1,-1, 1);
-	//glTexCoord2f(0.0, 1.0); glVertex3f( 1,-1,-1);
-	//glTexCoord2f(1.0, 1.0); glVertex3f( 1, 1,-1);
-	//glTexCoord2f(1.0, 0.0); glVertex3f( 1, 1, 1);
- 
-	glVertex3f( 1,-1, 1);
-	glVertex3f( 1,-1,-1);
-	glVertex3f( 1, 1,-1);
-	glVertex3f( 1, 1, 1);
+	//	Left side
+	glTexCoord2f(0.0, 0.0); glVertex3f( left,   0, fwd);
+	glTexCoord2f(0.0, 1.0); glVertex3f( left,   0,   0);
+	glTexCoord2f(1.0, 1.0); glVertex3f( left, top,   0);
+	glTexCoord2f(1.0, 0.0); glVertex3f( left, top, fwd);
 
-	//	Left side?
-	glTexCoord2f(0.0, 0.0); glVertex3f(-1,-1,-1);
-	glTexCoord2f(0.0, 1.0); glVertex3f( 1,-1,-1);
-	glTexCoord2f(1.0, 1.0); glVertex3f( 1,-1, 1);
-	glTexCoord2f(1.0, 0.0); glVertex3f(-1,-1, 1);
+	//	unknown
+	glVertex3f(-left,   0,   0);
+	glVertex3f( left,   0,   0);
+	glVertex3f( left,   0, fwd);
+	glVertex3f(-left,   0, fwd);
  
  	//	unknown
-	//glTexCoord2f(0.0, 0.0); glVertex3f(-1,-1, 1);
-	//glTexCoord2f(0.0, 1.0); glVertex3f( 1,-1, 1);
-	//glTexCoord2f(1.0, 1.0); glVertex3f( 1, 1, 1);
-	//glTexCoord2f(1.0, 0.0); glVertex3f(-1, 1, 1);
+	//glTexCoord2f(0.0, 0.0); glVertex3f(-left,0, fwd);
+	//glTexCoord2f(0.0, 1.0); glVertex3f( left,0, fwd);
+	//glTexCoord2f(1.0, 1.0); glVertex3f( left, top, fwd);
+	//glTexCoord2f(1.0, 0.0); glVertex3f(-left, top, fwd);
 
-	glVertex3f(-1,-1, 1);
-	glVertex3f( 1,-1, 1);
-	glVertex3f( 1, 1, 1);
-	glVertex3f(-1, 1, 1);
+	glVertex3f(-left,   0, fwd);
+	glVertex3f( left,   0, fwd);
+	glVertex3f( left, top, fwd);
+	glVertex3f(-left, top, fwd);
 
 	glEnd();
 	glFlush();
