@@ -47,7 +47,7 @@ static const int ARENA_HEIGHT = 500;
 static const int ARENA_WIDTH = 100;
 static const int ARENA_LENGTH = 100;
 
-static const unsigned int TRAIL_HEIGHT = 6;
+static const unsigned int TRAIL_HEIGHT = 10;
 
 static const GLdouble CAM_RIGHT = 50;
 static const GLdouble CAM_TOP = 50;
@@ -228,8 +228,8 @@ void drawScene(void)
 		//	Top left, top right, bottom right, bottom left
 		glVertex3f(player1Pt.x, TRAIL_HEIGHT, player1Pt.z);
 		glVertex3f(player1Pt2.x, TRAIL_HEIGHT, player1Pt2.z);
-		glVertex3f(player1Pt2.x, -10, player1Pt2.z);
-		glVertex3f(player1Pt.x, -10, player1Pt.z);
+		glVertex3f(player1Pt2.x, 0, player1Pt2.z);
+		glVertex3f(player1Pt.x, 0, player1Pt.z);
 	}
 
         //Draw 2D map

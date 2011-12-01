@@ -24,7 +24,7 @@ static int tex_width = 400, tex_height = 280;
 
 const float Player::right = 1.0;
 const float Player::top = 100;
-const float Player::fwd = 10;
+const float Player::fwd = 20;
 
 Player::Player() {
 	this->init(10, 10, 0);
@@ -118,16 +118,16 @@ void Player::drawCat(){
 	glVertex3f(-right, top,   0);
 
 	//	Right side?
-	glTexCoord2f(0.0, 0.0); glVertex3f(-right,   0,   0);
-	glTexCoord2f(0.0, 1.0); glVertex3f(-right,   0, fwd);
-	glTexCoord2f(1.0, 1.0); glVertex3f(-right, top, fwd);
-	glTexCoord2f(1.0, 0.0); glVertex3f(-right, top,   0);
+	glTexCoord2f(1.0, 0.0); glVertex3f(-right,   0,   0);
+	glTexCoord2f(0.0, 0.0); glVertex3f(-right,   0, fwd);
+	glTexCoord2f(0.0, 1.0); glVertex3f(-right, top, fwd);
+	glTexCoord2f(1.0, 1.0); glVertex3f(-right, top,   0);
 	 
 	//	Left side
-	glTexCoord2f(0.0, 0.0); glVertex3f( right,   0, fwd);
-	glTexCoord2f(0.0, 1.0); glVertex3f( right,   0,   0);
-	glTexCoord2f(1.0, 1.0); glVertex3f( right, top,   0);
-	glTexCoord2f(1.0, 0.0); glVertex3f( right, top, fwd);
+	glTexCoord2f(1.0, 0.0); glVertex3f( right,   0, fwd);
+	glTexCoord2f(0.0, 0.0); glVertex3f( right,   0,   0);
+	glTexCoord2f(0.0, 1.0); glVertex3f( right, top,   0);
+	glTexCoord2f(1.0, 1.0); glVertex3f( right, top, fwd);
 
 	//	Bottom side?
 	glVertex3f(-right,   0,   0);
