@@ -231,6 +231,17 @@ void drawScene(void)
 		glVertex3f(player1Pt.x, -10, player1Pt.z);
 	}
 
+        //Draw 2D map
+        //set to 2D mode
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, w, h, 0, -1, 1);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        //draw mini-map
+
 	glEnd();
 	glPopMatrix();
 
