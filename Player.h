@@ -26,12 +26,15 @@ public:
 	static const float fwd;
 
 	float playerColor[3];
-	uint8_t direction;
 	GLuint texture;
+	unsigned int catList; // Display lists base index.
+
+	uint8_t direction;
 	std::vector<Point> positions;
 
 	void turn(bool);
 	void drawCat();
+	void draw();
 	Point tick();
 	Player();
 	Player(float, float, uint8_t);

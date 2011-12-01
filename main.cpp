@@ -41,8 +41,6 @@ static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
 Player *player1;
 Player *player2;
 
-static unsigned int catList; // Display lists base index.
-
 static const int ARENA_HEIGHT = 500;
 static const int ARENA_WIDTH = 100;
 static const int ARENA_LENGTH = 100;
@@ -177,11 +175,7 @@ void drawScene(void)
 	glPopMatrix();
 
 	//	draw cat
-	glPushMatrix();
-	glTranslatef(player1Pt.x, 0, player1Pt.z);
-	glRotatef(player1->direction * 90, 0.0, 1.0, 0.0);
-	glCallList(catList);
-	glPopMatrix();
+	player1->draw();
 
 	if(isCollision){
 		glPushMatrix();
@@ -392,14 +386,6 @@ void setup(void)
 	player2 = new Player(80, 80, 1);
 
 	glClearColor(1.0, 1.0, 1.0, 0.0);  
-	catList = glGenLists(1);
-	glNewList(catList, GL_COMPILE);
-
-	glPushMatrix();
-	player1->drawCat();
-	glPopMatrix();
-
-	glEndList();
 }
 
 // OpenGL window reshape routine.

@@ -44,6 +44,15 @@ Player::Player(float initialX, float initialZ, uint8_t initialDirection) {
 	playerColor[0] = 0.0;
 	playerColor[1] = 0.0;
 	playerColor[2] = 0.0; 
+
+	catList = glGenLists(1);
+	glNewList(catList, GL_COMPILE);
+
+	glPushMatrix();
+	this->drawCat();
+	glPopMatrix();
+
+	glEndList();
 }
 
 void Player::init(float initialX, float initialZ, uint8_t initialDirection) {
@@ -86,18 +95,9 @@ Point Player::tick() {
 	currentPt.x -= sin(direction * M_PI_2) / 10;
 	currentPt.z -= cos(direction * M_PI_2) / 10;
 
-	switch (direction) {
-	case 0:
-		break;
-	case 1:
-		break;
-	case 2:
-		break;
-	case 3:
-		break;
-	}
-
 	positions[positions.size() - 1] = currentPt;
+
+	return currentPt;
 }
 
 // 	Player Cat
@@ -118,10 +118,11 @@ void Player::drawCat(){
 	glVertex3f(-right, top,   0);
 
 	//	Right side?
-	glTexCoord2f(1.0, 0.0); glVertex3f(-right,   0,   0);
-	glTexCoord2f(0.0, 0.0); glVertex3f(-right,   0, fwd);
-	glTexCoord2f(0.0, 1.0); glVertex3f(-right, top, fwd);
-	glTexCoord2f(1.0, 1.0); glVertex3f(-right, top,   0);
+	//	Currently draws nyan cat upside-down
+	glTexCoord2f(0.0, 1.0); glVertex3f(-right,   0,   0);
+	glTexCoord2f(1.0, 1.0); glVertex3f(-right,   0, fwd);
+	glTexCoord2f(1.0, 0.0); glVertex3f(-right, top, fwd);
+	glTexCoord2f(0.0, 0.0); glVertex3f(-right, top,   0);
 	 
 	//	Left side
 	glTexCoord2f(1.0, 0.0); glVertex3f( right,   0, fwd);
@@ -144,4 +145,12 @@ void Player::drawCat(){
 	glEnd();
 	glFlush();
 	glDisable(GL_TEXTURE_2D);
+}
+
+void Player::draw() {
+	glPushMatrix();
+	glTranslatef(positions[positions.size() - 1].x, 0, positions[positions.size() - 1].z);
+	glRotatef(this->direction * 90, 0.0, 1.0, 0.0);
+	glCallList(catList);
+	glPopMatrix();
 }
