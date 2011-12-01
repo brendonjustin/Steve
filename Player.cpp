@@ -22,9 +22,9 @@ static const float M_PI_2 = 1.57079633;
 static const string NYAN_TEXTURE = "frame00.png";
 static int tex_width = 400, tex_height = 280;
 
-const float Player::right = 0.25;
-const float Player::top = 50;
-const float Player::fwd = 5;
+const float Player::right = 1.0;
+const float Player::top = 100;
+const float Player::fwd = 10;
 
 Player::Player() {
 	this->init(10, 10, 0);
@@ -38,7 +38,7 @@ Player::Player(float initialX, float initialZ, uint8_t initialDirection) {
 
 	//	Handle errors
 	if (texture == 0) {
-		// TODO
+		// TODO soon
 	}
 	
 	playerColor[0] = 0.0;
@@ -104,6 +104,7 @@ Point Player::tick() {
 void Player::drawCat(){
 	glColor3fv(playerColor);
 	glRotatef(180.0, 0.0, 1.0, 0.0); // make cat point down the z-axis initially.
+	glScalef(0.25, 0.25, 0.25);
 
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);

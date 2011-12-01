@@ -49,8 +49,9 @@ static const int ARENA_LENGTH = 100;
 
 static const unsigned int TRAIL_HEIGHT = 6;
 
-static const GLdouble CAM_RIGHT = 25;
-static const GLdouble CAM_TOP = 25;
+static const GLdouble CAM_RIGHT = 50;
+static const GLdouble CAM_TOP = 50;
+static const GLdouble CAM_BACK = 100;
 static const GLdouble CAM_FWD = 1000;
 
 static const unsigned int CAM_BACK_DIST = 3;
@@ -235,7 +236,7 @@ void drawScene(void)
         //set to 2D mode
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0, w, h, 0, -1, 1);
+        glOrtho(0, width, height, 0, -1, 1);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -404,7 +405,7 @@ void resize(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 1000.0);
-	glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, 0.0, CAM_FWD);
+	glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, -CAM_BACK, CAM_FWD);
 
 	glMatrixMode(GL_MODELVIEW);
 }
