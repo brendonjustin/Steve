@@ -140,6 +140,10 @@ int CatCollision(float x, float z, float a)
 		return 1;
 	}
 
+        //not sure how this works yet
+        //glReadPixels(x, z, 1, 1, GL_RED, GL_UNSIGNED_BYTE, pRGB);
+
+
 	return 0;
 }
 
@@ -238,20 +242,19 @@ void drawScene(void)
                 glVertex3f(player1Pt2.z*30-width*9.4, player1Pt2.x*30-height*7.0, 0);
                 glVertex3f(player1Pt.z*30-width*9.4, player1Pt.x*30-height*7.0, 0);
                 //}
-                //else{ "Collision, you loose" }
+                //else{ "Collision, you loose"; }
         }
         glEnd();
-
 	glPopMatrix();
 
-	//cout << endl;
 
 	//-- repeat for player 2 ---------------------------------------------
-	if (enablePlayer2) {
+        if (enablePlayer2) {
 		Point player2Pt = player2->positions[player2->positions.size() - 1];
 		vector<Point> *player2Pts;
 		player2Pts = &(player2->positions);
 
+                //Drawing 3D
 		glLoadIdentity();
 		glViewport(0, 0, width, height/2.0);
 
