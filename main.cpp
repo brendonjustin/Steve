@@ -127,21 +127,7 @@ void drawWallFloors ()
 		}
 		glEnd();
 	}
-	//make lines for walls too
-	/*glColor3f(1.0, 1.0, 1.0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	for(float z=-ARENA_LENGTH; z<ARENA_LENGTH; z+=2.0)
-	{
-		glBegin(GL_QUADS);
-		for(float y=-ARENA_HEIGHT; y<ARENA_HEIGHT; y+=2.0)
-		{
-			glVertex3f(ARENA_WIDTH, y, z);                               
-			glVertex3f(ARENA_WIDTH, y+2, z);                               
-			glVertex3f(ARENA_WIDTH, y+2, z+2);                               
-			glVertex3f(ARENA_WIDTH, y, z+2);                               
-		}
-		glEnd();
-	}*/
+
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -197,14 +183,6 @@ void drawScene(void)
 	glCallList(catList);
 	glPopMatrix();
 
-	//	write player 1
-	//glPushMatrix();
-	//glTranslatef(0.0, 0.0, -30.0);
-	//glColor3fv(player1color);
-	//glRasterPos3f(-28.0, 25.0, 0.0);
-	//writeBitmapString((void*)font, (char*)"PLAYER ONE"); 
-	//glPopMatrix();
-
 	if(isCollision){
 		glPushMatrix();
 		glTranslatef(0.0, 0.0, -50);
@@ -232,18 +210,39 @@ void drawScene(void)
 		glVertex3f(player1Pt.x, 0, player1Pt.z);
 	}
 
-        //Draw 2D map
-        //set to 2D mode
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, width, height, 0, -1, 1);
+	glEnd();
 
+        //SET TO 2D
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+        gluOrtho2D(-width/2, 0, 0, height/2);
+        glDisable(GL_DEPTH_TEST);
 
-        //draw mini-map
+        //player 1
+        glColor3fv(player1color);
+        glRasterPos3f(-width*12.4, height*10, 0);
+        writeBitmapString((void*)font, (char*)"PLAYER ONE");
 
-	glEnd();
+        //MINI MAP
+        glColor3f(1.0, 1.0, 1.0);
+        //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);//semi transparent menu would be AWESOME
+
+        //area for map
+        glRectf(-width*12.4, -height*11.4, -width*7.4, -height*3);
+        glBegin(GL_LINES);
+
+        //lines for player
+        glColor3fv(player1color);
+        for(int i=0; i < player1Pts->size() - 1; ++i) {
+                player1Pt = (*player1Pts)[i];
+                player1Pt2 = (*player1Pts)[i+1];
+                cout << player1Pt.x << "  " << player1Pt.z << endl;
+
+                glVertex3f(player1Pt2.z*30-width*10.4, player1Pt2.x*30-height*9.4, 0);
+                glVertex3f(player1Pt.z*30-width*10.4, player1Pt.x*30-height*9.4, 0);
+        }
+        glEnd();
+
 	glPopMatrix();
 
 	//cout << endl;
