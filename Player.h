@@ -27,6 +27,14 @@ public:
 
 	float playerColor[3];
 	GLuint texture;
+	//GLuint texFrames[6];
+	//GLuint texFrame00;
+	//GLuint texFrame01;
+	//GLuint texFrame02;
+	//GLuint texFrame03;
+	//GLuint texFrame04;
+	//GLuint texFrame05;
+
 	unsigned int catList; // Display lists base index.
 
 	uint8_t direction;

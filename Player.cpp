@@ -20,6 +20,7 @@ static const float M_PI_2 = 1.57079633;
 #endif
 
 static const string NYAN_TEXTURE = "frame00.png";
+static const string NYAN_TEXTURES[6] = { "frame00.png", "frame01.png", "frame02.png", "frame03.png", "frame04.png", "frame05.png" };
 static int tex_width = 400, tex_height = 280;
 
 const float Player::right = 1.0;
@@ -32,27 +33,6 @@ Player::Player() {
 
 Player::Player(float initialX, float initialZ, uint8_t initialDirection) {
 	this->init(initialX, initialZ, initialDirection);
-
-	//	Load the nyan cat!
-	texture = loadTexture(NYAN_TEXTURE, tex_width, tex_height);
-
-	//	Handle errors
-	if (texture == 0) {
-		// TODO soon
-	}
-	
-	playerColor[0] = 0.0;
-	playerColor[1] = 0.0;
-	playerColor[2] = 0.0; 
-
-	catList = glGenLists(1);
-	glNewList(catList, GL_COMPILE);
-
-	glPushMatrix();
-	this->drawCat();
-	glPopMatrix();
-
-	glEndList();
 }
 
 void Player::init(float initialX, float initialZ, uint8_t initialDirection) {
@@ -66,6 +46,50 @@ void Player::init(float initialX, float initialZ, uint8_t initialDirection) {
 	positions.push_back(initialPt);
 
 	direction = initialDirection;
+
+	//	Load the nyan cat!
+	texture = loadTexture(NYAN_TEXTURE.c_str(), tex_width, tex_height);
+
+	//	Handle errors
+	if (texture == 0) {
+		// TODO soon
+	}
+
+	//	Load the nyan cat frames!
+	for (unsigned int i = 0; i < 6; ++i) {
+		//texFrames[i] = loadTexture(NYAN_TEXTURES[i], tex_width, tex_height);
+
+		////	Handle errors
+		//if (texFrames[i] == 0) {
+		//	// TODO soon
+		//}
+	}
+	
+	//	Load the nyan cat!
+	//texFrame00 = loadTexture(NYAN_TEXTURES[0].c_str(), tex_width, tex_height);
+	//texFrame01 = loadTexture(NYAN_TEXTURES[1].c_str(), tex_width, tex_height);
+	//texFrame02 = loadTexture(NYAN_TEXTURES[2].c_str(), tex_width, tex_height);
+	//texFrame03 = loadTexture(NYAN_TEXTURES[3].c_str(), tex_width, tex_height);
+	//texFrame04 = loadTexture(NYAN_TEXTURES[4].c_str(), tex_width, tex_height);
+	//texFrame05 = loadTexture(NYAN_TEXTURES[5].c_str(), tex_width, tex_height);
+
+	////	Handle errors
+	//if (texFrame00 == 0 || texFrame01 == 0 || texFrame02 == 0 || texFrame03 == 0 || texFrame04 == 0 || texFrame05 == 0) {
+	//	// TODO soon
+	//}
+
+	playerColor[0] = 0.0;
+	playerColor[1] = 0.0;
+	playerColor[2] = 0.0; 
+
+	catList = glGenLists(1);
+	glNewList(catList, GL_COMPILE);
+
+	glPushMatrix();
+	this->drawCat();
+	glPopMatrix();
+
+	glEndList();
 }
 
 //	Turn (responding to user input)
