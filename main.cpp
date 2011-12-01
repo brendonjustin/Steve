@@ -225,7 +225,8 @@ void drawScene(void)
 
         //MINI MAP
         glColor3f(1.0, 1.0, 1.0);
-        //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);//semi transparent menu would be AWESOME
+        //semi transparent menu would be AWESOME
+        //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
         //area for map
         glRectf(-width*12.4, -height*11.4, -width*7.4, -height*3);
@@ -236,10 +237,14 @@ void drawScene(void)
         for(int i=0; i < player1Pts->size() - 1; ++i) {
                 player1Pt = (*player1Pts)[i];
                 player1Pt2 = (*player1Pts)[i+1];
-                cout << player1Pt.x << "  " << player1Pt.z << endl;
 
-                glVertex3f(player1Pt2.z*30-width*10.4, player1Pt2.x*30-height*9.4, 0);
-                glVertex3f(player1Pt.z*30-width*10.4, player1Pt.x*30-height*9.4, 0);
+                //in CatCollision: use glReadPixel (if pixel isn't red, keep drawing, otherwise, collision!
+                //int k = CatCollision(player1Pt2.z*30-width*10.4, player1Pt2.x*30-height*9.4,direction);
+                //if(!k){
+                glVertex3f(player1Pt2.z*30-width*9.4, player1Pt2.x*30-height*7.0, 0);
+                glVertex3f(player1Pt.z*30-width*9.4, player1Pt.x*30-height*7.0, 0);
+                //}
+                //else{ "Collision, you loose" }
         }
         glEnd();
 
