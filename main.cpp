@@ -49,6 +49,10 @@ static const int ARENA_LENGTH = 100;
 
 static const unsigned int TRAIL_HEIGHT = 6;
 
+static const GLdouble CAM_RIGHT = 25;
+static const GLdouble CAM_TOP = 25;
+static const GLdouble CAM_FWD = 1000;
+
 static const unsigned int CAM_BACK_DIST = 3;
 static const unsigned int CAM_DIAG_LEFT_DIST = 2;
 static const unsigned int CAM_DIAG_UP_DIST = 10;
@@ -189,7 +193,6 @@ void drawScene(void)
 	glPushMatrix();
 	glTranslatef(player1Pt.x, 0, player1Pt.z);
 	glRotatef(player1->direction * 90, 0.0, 1.0, 0.0);
-	glColor3fv(player1color);
 	glCallList(catList);
 	glPopMatrix();
 
@@ -266,7 +269,7 @@ void drawScene(void)
 		//write player 2
 		glPushMatrix();
 		glTranslatef(0.0, 0.0, -30.0);
-		glColor3fv(player1color);
+		glColor3fv(player2color);
 		glRasterPos3f(-28.0, 25.0, 0.0);
 		writeBitmapString((void*)font, (char*)"PLAYER TWO"); 
 	}
@@ -390,7 +393,7 @@ void resize(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 1000.0);
-	glOrtho(-25.0, 25.0, -25.0, 25.0, 0.0, 1000.0);
+	glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, 0.0, CAM_FWD);
 
 	glMatrixMode(GL_MODELVIEW);
 }

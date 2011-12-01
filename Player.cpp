@@ -22,6 +22,10 @@ static const float M_PI_2 = 1.57079633;
 static const string NYAN_TEXTURE = "frame00.png";
 static int tex_width = 400, tex_height = 280;
 
+const float Player::right = 0.25;
+const float Player::top = 50;
+const float Player::fwd = 5;
+
 Player::Player() {
 	this->init(10, 10, 0);
 }
@@ -36,6 +40,10 @@ Player::Player(float initialX, float initialZ, uint8_t initialDirection) {
 	if (texture == 0) {
 		// TODO
 	}
+	
+	playerColor[0] = 0.0;
+	playerColor[1] = 0.0;
+	playerColor[2] = 0.0; 
 }
 
 void Player::init(float initialX, float initialZ, uint8_t initialDirection) {
@@ -94,12 +102,7 @@ Point Player::tick() {
 
 // 	Player Cat
 void Player::drawCat(){
-	float left, top, fwd;
-	left = 0.05;
-	top = 5;
-	fwd = 1;
-
-	float player1color[3] = {1.0, 0.0, 0.0}; 
+	glColor3fv(playerColor);
 	glRotatef(180.0, 0.0, 1.0, 0.0); // make cat point down the z-axis initially.
 
 	glEnable(GL_TEXTURE_2D);
@@ -107,45 +110,35 @@ void Player::drawCat(){
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glBegin(GL_QUADS);
 
-	//	unknown
-	//glTexCoord2f(0.0, 0.0); glVertex3f(-left,0,0);
-	//glTexCoord2f(0.0, 1.0); glVertex3f( left,0,0);
-	//glTexCoord2f(1.0, 1.0); glVertex3f( left, top,0);
-	//glTexCoord2f(1.0, 0.0); glVertex3f(-left, top,0);
-	 
-	glVertex3f(-left,   0,   0);
-	glVertex3f( left,   0,   0);
-	glVertex3f( left, top,   0);
-	glVertex3f(-left, top,   0);
+	//	Back side?
+	glVertex3f(-right,   0,   0);
+	glVertex3f( right,   0,   0);
+	glVertex3f( right, top,   0);
+	glVertex3f(-right, top,   0);
 
-	//	Top?
-	glVertex3f(-left,   0,   0);
-	glVertex3f(-left,   0, fwd);
-	glVertex3f(-left, top, fwd);
-	glVertex3f(-left, top,   0);
+	//	Right side?
+	glTexCoord2f(0.0, 0.0); glVertex3f(-right,   0,   0);
+	glTexCoord2f(0.0, 1.0); glVertex3f(-right,   0, fwd);
+	glTexCoord2f(1.0, 1.0); glVertex3f(-right, top, fwd);
+	glTexCoord2f(1.0, 0.0); glVertex3f(-right, top,   0);
 	 
 	//	Left side
-	glTexCoord2f(0.0, 0.0); glVertex3f( left,   0, fwd);
-	glTexCoord2f(0.0, 1.0); glVertex3f( left,   0,   0);
-	glTexCoord2f(1.0, 1.0); glVertex3f( left, top,   0);
-	glTexCoord2f(1.0, 0.0); glVertex3f( left, top, fwd);
+	glTexCoord2f(0.0, 0.0); glVertex3f( right,   0, fwd);
+	glTexCoord2f(0.0, 1.0); glVertex3f( right,   0,   0);
+	glTexCoord2f(1.0, 1.0); glVertex3f( right, top,   0);
+	glTexCoord2f(1.0, 0.0); glVertex3f( right, top, fwd);
 
-	//	unknown
-	glVertex3f(-left,   0,   0);
-	glVertex3f( left,   0,   0);
-	glVertex3f( left,   0, fwd);
-	glVertex3f(-left,   0, fwd);
+	//	Bottom side?
+	glVertex3f(-right,   0,   0);
+	glVertex3f( right,   0,   0);
+	glVertex3f( right,   0, fwd);
+	glVertex3f(-right,   0, fwd);
  
- 	//	unknown
-	//glTexCoord2f(0.0, 0.0); glVertex3f(-left,0, fwd);
-	//glTexCoord2f(0.0, 1.0); glVertex3f( left,0, fwd);
-	//glTexCoord2f(1.0, 1.0); glVertex3f( left, top, fwd);
-	//glTexCoord2f(1.0, 0.0); glVertex3f(-left, top, fwd);
-
-	glVertex3f(-left,   0, fwd);
-	glVertex3f( left,   0, fwd);
-	glVertex3f( left, top, fwd);
-	glVertex3f(-left, top, fwd);
+	//	Front side?
+	glVertex3f(-right,   0, fwd);
+	glVertex3f( right,   0, fwd);
+	glVertex3f( right, top, fwd);
+	glVertex3f(-right, top, fwd);
 
 	glEnd();
 	glFlush();

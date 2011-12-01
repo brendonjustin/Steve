@@ -21,7 +21,11 @@ struct Point {
 
 class Player {
 public:
-	float color[3];
+	static const float right;
+	static const float top;
+	static const float fwd;
+
+	float playerColor[3];
 	uint8_t direction;
 	GLuint texture;
 	std::vector<Point> positions;
