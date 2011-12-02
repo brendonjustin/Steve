@@ -129,9 +129,10 @@ void drawWallFloors ()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-int CatCollision(float x, float z, float a)
+int CatCollision(float x, float z, float a, int d)
 {
-	// Check for collision with all walls
+    if( d == 3){ //3D
+        // Check for collision with outer walls
 	if(x < (-ARENA_WIDTH+1.0) || x > (ARENA_WIDTH-1.0)){
 		return 1;
 	}
@@ -139,11 +140,23 @@ int CatCollision(float x, float z, float a)
 	if(z < (-ARENA_LENGTH+1.0) || z > (ARENA_LENGTH-1.0)){
 		return 1;
 	}
+    }
+    //check player walls
+    if( d == 2) { //2D
+        const int size = 1 * 1 * 4;
+        GLubyte pixels[size];
 
-        //not sure how this works yet
-        //glReadPixels(x, z, 1, 1, GL_RED, GL_UNSIGNED_BYTE, pRGB);
+        //looking at pixel, not infront
+        glReadPixels(0, 0, x+cos(a), z+sin(a), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
-
+        for(int index = 0; index < size; index+=4)
+        {
+            cout << "red " << (unsigned)pixels[index+0] << endl;
+            cout << "green " << (unsigned)pixels[index+1] << endl;
+            cout << "blue " << (unsigned)pixels[index+2] << endl;
+        }
+        pixels[0] = '\0';
+    }
 	return 0;
 }
 
@@ -236,13 +249,26 @@ void drawScene(void)
                 player1Pt = (*player1Pts)[i];
                 player1Pt2 = (*player1Pts)[i+1];
 
-                //in CatCollision: use glReadPixel (if pixel isn't red, keep drawing, otherwise, collision!
-                //int k = CatCollision(player1Pt2.z*30-width*10.4, player1Pt2.x*30-height*9.4,direction);
-                //if(!k){
+                const int size = 1 * 1 * 4;
+                GLubyte pixels[size];
+
+                //looking at pixel, not infront
+                glReadPixels(0, 0, player1Pt.z*30-width*9.4+cos(player1->direction),
+                      player1Pt.x*30-height*7.0+sin(player1->direction),
+                      GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+                for(int index = 0; index < size; index+=4)
+                {
+                    cout << "red " << (unsigned)pixels[index+0] << endl;
+                    cout << "green " << (unsigned)pixels[index+1] << endl;
+                    cout << "blue " << (unsigned)pixels[index+2] << endl;
+                }
+
+
+                //int k = CatCollision(player1Pt2.z*30-width*9.4, player1Pt2.x*30-height*7.0,player1->direction,2);
                 glVertex3f(player1Pt2.z*30-width*9.4, player1Pt2.x*30-height*7.0, 0);
                 glVertex3f(player1Pt.z*30-width*9.4, player1Pt.x*30-height*7.0, 0);
-                //}
-                //else{ "Collision, you loose"; }
+                //cout << k << endl;
         }
         glEnd();
 	glPopMatrix();
@@ -310,7 +336,7 @@ void animate(int value)
 		player1->tick();
 		player2->tick();
 
-		isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90);
+                isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90, 3);
 		if(!isCollision){
 			if (isAnimate) 
 			{
