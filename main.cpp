@@ -227,7 +227,7 @@ void drawScene(void)
         //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
         //area for map
-        glRectf(-width*12.4, -height*11.4, -width*7.4, -height*3);
+        glRectf(-width*12.4, -height*11.4, -width*12.4 + ARENA_HEIGHT*12, -height*11.5 +ARENA_WIDTH*62);
         glBegin(GL_LINES);
 
         //lines for player
