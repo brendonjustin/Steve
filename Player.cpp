@@ -2,7 +2,6 @@
 //	Player (cat) class
 
 #include "Player.h"
-#include "png_loader.h"
 #include <cmath>
 
 #ifdef __APPLE__
@@ -19,23 +18,21 @@ static const float M_PI = 3.14159265;
 static const float M_PI_2 = 1.57079633;
 #endif
 
-static const string NYAN_TEXTURE = "frame00.png";
-static const string NYAN_TEXTURES[6] = { "frame00.png", "frame01.png", "frame02.png", "frame03.png", "frame04.png", "frame05.png" };
-static int tex_width = 400, tex_height = 280;
-
 const float Player::right = 1.0;
 const float Player::top = 100;
 const float Player::fwd = 20;
 
-Player::Player() {
-	this->init(10, 10, 0);
+Player::Player(GLuint *textureFrames) {
+	this->init(10, 10, 0, textureFrames);
 }
 
-Player::Player(float initialX, float initialZ, uint8_t initialDirection) {
-	this->init(initialX, initialZ, initialDirection);
+Player::Player(float initialX, float initialZ, uint8_t initialDirection, GLuint *textureFrames) {
+	this->init(initialX, initialZ, initialDirection, textureFrames);
 }
 
-void Player::init(float initialX, float initialZ, uint8_t initialDirection) {
+void Player::init(float initialX, float initialZ, uint8_t initialDirection, GLuint *textureFrames) {
+	frameCount = 0;
+
 	turning = false;
 
 	Point initialPt;
@@ -47,41 +44,14 @@ void Player::init(float initialX, float initialZ, uint8_t initialDirection) {
 
 	direction = initialDirection;
 
-	//	Load the nyan cat!
-	texture = loadTexture(NYAN_TEXTURE.c_str(), tex_width, tex_height);
-
-	//	Handle errors
-	if (texture == 0) {
-		// TODO soon
-	}
-
-	//	Load the nyan cat frames!
-	for (unsigned int i = 0; i < 6; ++i) {
-		//texFrames[i] = loadTexture(NYAN_TEXTURES[i], tex_width, tex_height);
-
-		////	Handle errors
-		//if (texFrames[i] == 0) {
-		//	// TODO soon
-		//}
-	}
-	
-	//	Load the nyan cat!
-	//texFrame00 = loadTexture(NYAN_TEXTURES[0].c_str(), tex_width, tex_height);
-	//texFrame01 = loadTexture(NYAN_TEXTURES[1].c_str(), tex_width, tex_height);
-	//texFrame02 = loadTexture(NYAN_TEXTURES[2].c_str(), tex_width, tex_height);
-	//texFrame03 = loadTexture(NYAN_TEXTURES[3].c_str(), tex_width, tex_height);
-	//texFrame04 = loadTexture(NYAN_TEXTURES[4].c_str(), tex_width, tex_height);
-	//texFrame05 = loadTexture(NYAN_TEXTURES[5].c_str(), tex_width, tex_height);
-
-	////	Handle errors
-	//if (texFrame00 == 0 || texFrame01 == 0 || texFrame02 == 0 || texFrame03 == 0 || texFrame04 == 0 || texFrame05 == 0) {
-	//	// TODO soon
-	//}
+	//	Use the textures passed in from init
+	texFrames = textureFrames;
 
 	playerColor[0] = 0.0;
 	playerColor[1] = 0.0;
 	playerColor[2] = 0.0; 
 
+	//	Note that this isn't used, the way texture animation is done
 	catList = glGenLists(1);
 	glNewList(catList, GL_COMPILE);
 
@@ -132,7 +102,14 @@ void Player::drawCat(){
 
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-	glBindTexture(GL_TEXTURE_2D, texture);
+
+	//	Just use the first frame of the animation
+	//glBindTexture(GL_TEXTURE_2D, *(texFrames+0));
+
+	//	Rotate texture every 8 calls to draw, making an animation
+	glBindTexture(GL_TEXTURE_2D, *(texFrames+((++frameCount)/8)));
+	frameCount = frameCount % 48;
+
 	glBegin(GL_QUADS);
 
 	//	Back side?
@@ -175,6 +152,7 @@ void Player::draw() {
 	glPushMatrix();
 	glTranslatef(positions[positions.size() - 1].x, 0, positions[positions.size() - 1].z);
 	glRotatef(this->direction * 90, 0.0, 1.0, 0.0);
-	glCallList(catList);
+	//glCallList(catList);
+	this->drawCat();
 	glPopMatrix();
 }

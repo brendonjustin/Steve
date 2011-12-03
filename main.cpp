@@ -12,6 +12,7 @@
 #include <vector>
 #include <fstream>
 
+#include "png_loader.h"
 #include "Player.h"
 
 #ifdef __APPLE__
@@ -36,10 +37,15 @@ static const bool enablePlayer2 = false;
 
 static float player1color[3] = {1.0, 0.0, 0.0}; 
 static float player2color[3] = {0.0, 0.0, 1.0};
-static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
 
 Player *player1;
 Player *player2;
+
+static const string NYAN_TEXTURES[6] = { "frame00.png", "frame01.png", "frame02.png", "frame03.png", "frame04.png", "frame05.png" };
+static int tex_width = 400, tex_height = 280;
+static GLuint textureFrames[6];
+
+static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
 
 static const int ARENA_HEIGHT = 500;
 static const int ARENA_WIDTH = 100;
@@ -411,8 +417,19 @@ void animate(int value)
 // Initialization routine.
 void setup(void) 
 {
-	player1 = new Player(30, 30, 0);
-	player2 = new Player(80, 80, 1);
+	//	Load the nyan cat frames!
+	for (unsigned int i = 0; i < 6; ++i) {
+		textureFrames[i] = loadTexture(NYAN_TEXTURES[i], tex_width, tex_height);
+
+		//	Handle errors
+		if (textureFrames[i] == 0) {
+			// TODO soon
+			cout << "Texture " << i << " failed to load." << endl;
+		}
+	}
+
+	player1 = new Player(30, 30, 0, textureFrames);
+	player2 = new Player(80, 80, 1, textureFrames);
 
 	glClearColor(1.0, 1.0, 1.0, 0.0);  
 }

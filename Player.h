@@ -26,14 +26,8 @@ public:
 	static const float fwd;
 
 	float playerColor[3];
-	GLuint texture;
-	//GLuint texFrames[6];
-	//GLuint texFrame00;
-	//GLuint texFrame01;
-	//GLuint texFrame02;
-	//GLuint texFrame03;
-	//GLuint texFrame04;
-	//GLuint texFrame05;
+	GLuint *texFrames;
+	unsigned int frameCount;
 
 	unsigned int catList; // Display lists base index.
 
@@ -44,11 +38,11 @@ public:
 	void drawCat();
 	void draw();
 	Point tick();
-	Player();
-	Player(float, float, uint8_t);
+	Player(GLuint *);
+	Player(float, float, uint8_t, GLuint *);
 
 private:
 	bool turning;
-	void init(float, float, uint8_t);
+	void init(float, float, uint8_t, GLuint *);
 };
 
