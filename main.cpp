@@ -149,11 +149,11 @@ int CatCollision(float x, float z, float a, int d)
     }
     //check player walls
     if( d == 2) { //2D
-        const int size = 1 * 1 * 4;
+        /*const int size = 1 * 1 * 4;
         GLubyte pixels[size];
 
         //looking at pixel, not infront
-        glReadPixels(0, 0, x+cos(a), z+sin(a), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        glReadPixels(0, 0, x, z, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
         for(int index = 0; index < size; index+=4)
         {
@@ -161,7 +161,7 @@ int CatCollision(float x, float z, float a, int d)
             cout << "green " << (unsigned)pixels[index+1] << endl;
             cout << "blue " << (unsigned)pixels[index+2] << endl;
         }
-        pixels[0] = '\0';
+        pixels[0] = '\0';*/
     }
 	return 0;
 }
@@ -249,33 +249,35 @@ void drawScene(void)
         glRectf(-width*12.4, -height*11.4, -width*12.4 + ARENA_HEIGHT*12, -height*11.5 +ARENA_WIDTH*62);
         glBegin(GL_LINES);
 
+        //looking at pixel look for collision, not infront
+        const int size = 1 * 1 * 4;
+        GLubyte pixels[size];
+        glReadPixels(-width*11.4, -height*10.4, 1, 1,
+                     GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        if(glGetError() != GL_NO_ERROR)
+            printf("opengl error");
+
+
+        for(int index = 0; index < size; index+=4)
+        {
+            cout << "red " << (unsigned)pixels[index+0] << endl;
+            cout << "green " << (unsigned)pixels[index+1] << endl;
+            cout << "blue " << (unsigned)pixels[index+2] << endl;
+        }
+        memset(pixels, 0, size*sizeof(GLubyte));
+
         //lines for player
         glColor3fv(player1color);
         for(int i=0; i < player1Pts->size() - 1; ++i) {
                 player1Pt = (*player1Pts)[i];
                 player1Pt2 = (*player1Pts)[i+1];
 
-                const int size = 1 * 1 * 4;
-                GLubyte pixels[size];
-
-                //looking at pixel, not infront
-                glReadPixels(0, 0, player1Pt.z*30-width*9.4+cos(player1->direction),
-                      player1Pt.x*30-height*7.0+sin(player1->direction),
-                      GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-
-                for(int index = 0; index < size; index+=4)
-                {
-                    cout << "red " << (unsigned)pixels[index+0] << endl;
-                    cout << "green " << (unsigned)pixels[index+1] << endl;
-                    cout << "blue " << (unsigned)pixels[index+2] << endl;
-                }
-
-
                 //int k = CatCollision(player1Pt2.z*30-width*9.4, player1Pt2.x*30-height*7.0,player1->direction,2);
                 glVertex3f(player1Pt2.z*30-width*9.4, player1Pt2.x*30-height*7.0, 0);
                 glVertex3f(player1Pt.z*30-width*9.4, player1Pt.x*30-height*7.0, 0);
                 //cout << k << endl;
         }
+        //clear array
         glEnd();
 	glPopMatrix();
 
