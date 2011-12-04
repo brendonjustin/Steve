@@ -122,10 +122,10 @@ void Player::drawCat(){
 
 	//	Right side?
 	//	Currently draws nyan cat upside-down
-	glTexCoord2f(0.0, 1.0); glVertex3f(-right,   0,   0);
-	glTexCoord2f(1.0, 1.0); glVertex3f(-right,   0, fwd);
-	glTexCoord2f(1.0, 0.0); glVertex3f(-right, top, fwd);
-	glTexCoord2f(0.0, 0.0); glVertex3f(-right, top,   0);
+	glTexCoord2f(0.0, 0.0); glVertex3f(-right,   0,   0);
+	glTexCoord2f(1.0, 0.0); glVertex3f(-right,   0, fwd);
+	glTexCoord2f(1.0, 1.0); glVertex3f(-right, top, fwd);
+	glTexCoord2f(0.0, 1.0); glVertex3f(-right, top,   0);
 	 
 	//	Left side
 	glTexCoord2f(1.0, 0.0); glVertex3f( right,   0, fwd);
