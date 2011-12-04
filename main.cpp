@@ -241,30 +241,25 @@ void drawScene(void)
         writeBitmapString((void*)font, (char*)"PLAYER ONE");
 
         //MINI MAP
-        glColor3f(1.0, 1.0, 1.0);
+        glColor3f(.2, .2, .2);
         //semi transparent menu would be AWESOME
         //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
         //area for map
-        glRectf(-width*12.4, -height*11.4, -width*12.4 + ARENA_HEIGHT*12, -height*11.5 +ARENA_WIDTH*62);
+        glRectf(-width*12.4, -height*11.4, -width*12.4 + ARENA_WIDTH*62, -height*11.5 +ARENA_LENGTH*62);
         glBegin(GL_LINES);
 
         //looking at pixel look for collision, not infront
-        const int size = 1 * 1 * 4;
-        GLubyte pixels[size];
-        glReadPixels(-width*11.4, -height*10.4, 1, 1,
-                     GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        unsigned char pixel[3];
+        glReadPixels(-width*12.4+1, -height*11.4+1, 1, 1, GL_RGB , GL_UNSIGNED_BYTE , pixel);
         if(glGetError() != GL_NO_ERROR)
             printf("opengl error");
 
+        cout << "red " << (unsigned)pixel[0] << endl;
+        cout << "green " << (unsigned)pixel[1] << endl;
+        cout << "blue " << (unsigned)pixel[2] << endl;
 
-        for(int index = 0; index < size; index+=4)
-        {
-            cout << "red " << (unsigned)pixels[index+0] << endl;
-            cout << "green " << (unsigned)pixels[index+1] << endl;
-            cout << "blue " << (unsigned)pixels[index+2] << endl;
-        }
-        memset(pixels, 0, size*sizeof(GLubyte));
+        memset(pixel, 0, 3*sizeof(GLubyte));
 
         //lines for player
         glColor3fv(player1color);
