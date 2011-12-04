@@ -230,7 +230,7 @@ void drawScene(void)
         glBegin(GL_LINES);
 
         //looking at pixel look for collision, not infront
-        unsigned char pixel[3];
+        GLubyte pixel[3];
         glReadPixels(-width*12.4+1, -height*11.4+1, 1, 1, GL_RGB , GL_UNSIGNED_BYTE , pixel);
         if(glGetError() != GL_NO_ERROR)
             printf("opengl error");
