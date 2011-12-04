@@ -35,7 +35,6 @@ public:
 	std::vector<Point> positions;
 
 	void turn(bool);
-	void drawCat();
 	void draw();
 	Point tick();
 	Player(GLuint *);
@@ -44,5 +43,7 @@ public:
 private:
 	bool turning;
 	void init(float, float, uint8_t, GLuint *);
+	void drawCat();
+	void drawTrail();
 };
 

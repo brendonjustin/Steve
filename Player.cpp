@@ -18,6 +18,8 @@ static const float M_PI = 3.14159265;
 static const float M_PI_2 = 1.57079633;
 #endif
 
+static const unsigned int TRAIL_HEIGHT = 10;
+
 const float Player::right = 0.25;
 const float Player::top = 100;
 const float Player::fwd = 20;
@@ -47,7 +49,7 @@ void Player::init(float initialX, float initialZ, uint8_t initialDirection, GLui
 	//	Use the textures passed in from init
 	texFrames = textureFrames;
 
-	playerColor[0] = 0.0;
+	playerColor[0] = 1.0;
 	playerColor[1] = 0.0;
 	playerColor[2] = 0.0; 
 
@@ -96,7 +98,11 @@ Point Player::tick() {
 
 // 	Player Cat
 void Player::drawCat(){
-	glColor3fv(playerColor);
+	glPushMatrix();
+	glTranslatef(positions[positions.size() - 1].x, 0, positions[positions.size() - 1].z);
+	glRotatef(this->direction * 90, 0.0, 1.0, 0.0);
+
+	glColor3f(0.0, 0.0, 0.0);
 	glRotatef(180.0, 0.0, 1.0, 0.0); // make cat point down the z-axis initially.
 	glScalef(0.25, 0.25, 0.25);
 
@@ -145,16 +151,37 @@ void Player::drawCat(){
 	glVertex3f(-right, top, fwd);
 
 	glEnd();
-	glFlush();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
+	glFlush();
+
+	glPopMatrix();
+}
+
+void Player::drawTrail() {
+	glPushMatrix();
+	glColor3fv(playerColor);
+	glBegin(GL_QUADS); 
+
+	Point playerPt;
+	Point playerPt2;
+
+	for(int i=0; i < positions.size() - 1; ++i) {
+		playerPt = positions[i];
+		playerPt2 = positions[i+1];
+
+		//cout << playerPt.x << "  " << playerPt.z << "  ";
+		//	Top left, top right, bottom right, bottom left
+		glVertex3f(playerPt.x, TRAIL_HEIGHT, playerPt.z);
+		glVertex3f(playerPt2.x, TRAIL_HEIGHT, playerPt2.z);
+		glVertex3f(playerPt2.x, 0, playerPt2.z);
+		glVertex3f(playerPt.x, 0, playerPt.z);
+	}
+
+	glEnd();
 }
 
 void Player::draw() {
-	glPushMatrix();
-	glTranslatef(positions[positions.size() - 1].x, 0, positions[positions.size() - 1].z);
-	glRotatef(this->direction * 90, 0.0, 1.0, 0.0);
-	//glCallList(catList);
 	this->drawCat();
-	glPopMatrix();
+	this->drawTrail();
 }

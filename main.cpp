@@ -51,8 +51,6 @@ static const int ARENA_HEIGHT = 200;
 static const int ARENA_WIDTH = 100;
 static const int ARENA_LENGTH = 100;
 
-static const unsigned int TRAIL_HEIGHT = 10;
-
 static const GLdouble CAM_RIGHT = 50;
 static const GLdouble CAM_TOP = 50;
 static const GLdouble CAM_BACK = 300;
@@ -199,7 +197,7 @@ void drawScene(void)
 	drawWallFloors();
 	glPopMatrix();
 
-	//	draw cat
+	//	draw cat and trail
 	player1->draw();
 
 	if(isCollision){
@@ -210,26 +208,6 @@ void drawScene(void)
 		writeBitmapString((void*)font, (char*)"CRAHSED!!!!!"); 
 		glPopMatrix();
 	}
-
-	//NyaWall(path1);
-	glColor3f(0.0, 0.0, 0.0);
-	glPushMatrix();
-	glColor3fv(player1color);
-	glBegin(GL_QUADS); 
-
-	for(int i=0; i < player1Pts->size() - 1; ++i) {
-		player1Pt = (*player1Pts)[i];
-		player1Pt2 = (*player1Pts)[i+1];
-
-		//cout << player1Pt.x << "  " << player1Pt.z << "  ";
-		//	Top left, top right, bottom right, bottom left
-		glVertex3f(player1Pt.x, TRAIL_HEIGHT, player1Pt.z);
-		glVertex3f(player1Pt2.x, TRAIL_HEIGHT, player1Pt2.z);
-		glVertex3f(player1Pt2.x, 0, player1Pt2.z);
-		glVertex3f(player1Pt.x, 0, player1Pt.z);
-	}
-
-	glEnd();
 
         //SET TO 2D
         glMatrixMode(GL_MODELVIEW);
