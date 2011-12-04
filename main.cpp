@@ -235,18 +235,6 @@ void drawScene(void)
         glRectf(-width*12.4, -height*11.4, -width*12.4 + ARENA_WIDTH*62, -height*11.5 +ARENA_LENGTH*62);
         glBegin(GL_LINES);
 
-        //looking at pixel look for collision, not infront
-        unsigned char pixel[3];
-        glReadPixels(-width*12.4+1, -height*11.4+1, 1, 1, GL_RGB , GL_UNSIGNED_BYTE , pixel);
-        if(glGetError() != GL_NO_ERROR)
-            printf("opengl error");
-
-        cout << "red " << (unsigned)pixel[0] << endl;
-        cout << "green " << (unsigned)pixel[1] << endl;
-        cout << "blue " << (unsigned)pixel[2] << endl;
-
-        memset(pixel, 0, 3*sizeof(GLubyte));
-
         //lines for player
         glColor3fv(player1color);
         for(int i=0; i < player1Pts->size() - 1; ++i) {
@@ -258,6 +246,17 @@ void drawScene(void)
                 glVertex3f(player1Pt.z*30-width*9.4, player1Pt.x*30-height*7.0, 0);
                 //cout << k << endl;
         }
+
+        //looking at pixel look for collision, not infront
+        GLfloat pixel[3];
+        glReadPixels(0, 0, 1, 1, GL_RGB , GL_UNSIGNED_BYTE , pixel);
+        if(glGetError() != GL_NO_ERROR)
+            printf("opengl error");
+
+        cout << "red " << (unsigned )pixel[0] << endl;
+        cout << "green " << (unsigned )pixel[1] << endl;
+        cout << "blue " << (unsigned )pixel[2] << endl;
+        memset(pixel, 0, 3*sizeof(GLfloat));
         //clear array
         glEnd();
 	glPopMatrix();
