@@ -18,7 +18,7 @@ static const float M_PI = 3.14159265;
 static const float M_PI_2 = 1.57079633;
 #endif
 
-const float Player::right = 1.0;
+const float Player::right = 0.25;
 const float Player::top = 100;
 const float Player::fwd = 20;
 
@@ -101,7 +101,9 @@ void Player::drawCat(){
 	glScalef(0.25, 0.25, 0.25);
 
 	glEnable(GL_TEXTURE_2D);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	//	Just use the first frame of the animation
 	//glBindTexture(GL_TEXTURE_2D, *(texFrames+0));
