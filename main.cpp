@@ -82,6 +82,8 @@ void writeBitmapString(void *font, char *string)
 
 void drawWallFloors ()
 {
+	glPushMatrix();
+
 	// Draw walls of arena
 	glColor3f(0.0, 0.0, 0.8);
 	glBegin(GL_QUADS); 
@@ -131,6 +133,8 @@ void drawWallFloors ()
 	}
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glPopMatrix();
 }
 
 int CatCollision(float x, float z, float a, int d)
@@ -167,6 +171,10 @@ int CatCollision(float x, float z, float a, int d)
 // Drawing routine.
 void drawScene(void)
 {
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// -- player 1 ----------------------------------------------------
@@ -193,9 +201,7 @@ void drawScene(void)
 		0.0);
 
 	//	draw walls and floor
-	glPushMatrix();
 	drawWallFloors();
-	glPopMatrix();
 
 	//	draw cat and trail
 	player1->draw();
@@ -303,6 +309,8 @@ void drawScene(void)
 		writeBitmapString((void*)font, (char*)"You Win!!!!!"); 
 		glPopMatrix();
 	}
+
+	glDisable(GL_DEPTH_TEST);
 
 	glutSwapBuffers();
 }
@@ -481,9 +489,6 @@ int main(int argc, char **argv)
 	glutInitWindowSize(width, height);
 	glutInitWindowPosition(100, 100); 
 	glutCreateWindow ("steve"); 
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
 
 	setup(); 
 
