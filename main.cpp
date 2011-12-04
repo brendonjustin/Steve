@@ -243,13 +243,13 @@ void drawScene(void)
 
         //looking at pixel look for collision, not infront
         GLfloat pixel[3];
-        glReadPixels(0, 0, 1, 1, GL_RGB , GL_UNSIGNED_BYTE , pixel);
+        glReadPixels(0, 0, 1, 1, GL_RGB , GL_FLOAT , pixel);
         if(glGetError() != GL_NO_ERROR)
             printf("opengl error");
-
-        cout << "red " << (unsigned )pixel[0] << endl;
-        cout << "green " << (unsigned )pixel[1] << endl;
-        cout << "blue " << (unsigned )pixel[2] << endl;
+        //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
+        printf("red %f\n", pixel[0]);
+        printf("green %f\n", pixel[2]);
+        printf("blue %f\n", pixel[3]);
         memset(pixel, 0, 3*sizeof(GLfloat));
         //clear array
         glEnd();
