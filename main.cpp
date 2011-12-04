@@ -273,9 +273,9 @@ void drawScene(void)
 		glViewport(0, 0, width, height/2.0);
 
 		// Locate the camera behind, and off to the side, of cat 
-		gluLookAt(player2Pt.x + CAM_BACK_DIST * sin( player1->direction * M_PI_2) - CAM_DIAG_LEFT_DIST * cos( player1->direction * M_PI_2), 
+		gluLookAt(player2Pt.x + CAM_BACK_DIST * sin( player2->direction * M_PI_2) - CAM_DIAG_LEFT_DIST * cos( player1->direction * M_PI_2), 
 			CAM_DIAG_UP_DIST, 
-			player2Pt.z + CAM_BACK_DIST * cos( player1->direction * M_PI_2) + CAM_DIAG_LEFT_DIST * sin ( player1->direction * M_PI_2), 
+			player2Pt.z + CAM_BACK_DIST * cos( player2->direction * M_PI_2) + CAM_DIAG_LEFT_DIST * sin ( player1->direction * M_PI_2), 
 			player2Pt.x,
 			CAM_DIAG_UP_DIST - 8,
 			player2Pt.z, 
@@ -283,15 +283,11 @@ void drawScene(void)
 			1.0, 
 			0.0);
 
-		//draw walls and floor
-		glPushMatrix();
+		// draw walls and floor
 		drawWallFloors();
-		glPopMatrix();
 
-		//draw cat
-		glPushMatrix();
-		glTranslatef(player2Pt.x, 0, player2Pt.z);
-		glRotatef(player2->direction * 90, 0.0, 1.0, 0.0);
+		// draw cat and trails
+		player2->draw();
 
 		//write player 2
 		glPushMatrix();
