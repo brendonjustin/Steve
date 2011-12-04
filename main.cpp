@@ -89,30 +89,30 @@ void drawWallFloors ()
 	glBegin(GL_QUADS); 
 	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);                               
 	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);                          
-	glVertex3f(-ARENA_WIDTH, -10, -ARENA_LENGTH); 
+	glVertex3f(-ARENA_WIDTH, 0, -ARENA_LENGTH); 
 	glColor3f(0.0, 0.0, 0.4);             
-	glVertex3f(ARENA_WIDTH, -10, -ARENA_LENGTH);
+	glVertex3f(ARENA_WIDTH, 0, -ARENA_LENGTH);
 	glColor3f(0.0, 0.0, 0.8);       
 
 	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);  
 	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                          
-	glVertex3f(-ARENA_WIDTH, -10, ARENA_LENGTH);   
+	glVertex3f(-ARENA_WIDTH, 0, ARENA_LENGTH);   
 	glColor3f(0.0, 0.0, 0.4);              
-	glVertex3f(ARENA_WIDTH, -10, ARENA_LENGTH);  
+	glVertex3f(ARENA_WIDTH, 0, ARENA_LENGTH);  
 	glColor3f(0.0, 0.0, 0.8);         
 
 	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);  
 	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                         
-	glVertex3f(-ARENA_WIDTH, -10, ARENA_LENGTH); 
+	glVertex3f(-ARENA_WIDTH, 0, ARENA_LENGTH); 
 	glColor3f(0.0, 0.0, 0.4);               
-	glVertex3f(-ARENA_WIDTH, -10, -ARENA_LENGTH);  
+	glVertex3f(-ARENA_WIDTH, 0, -ARENA_LENGTH);  
 	glColor3f(0.0, 0.0, 0.8);  
 
 	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);  
 	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                         
-	glVertex3f(ARENA_WIDTH, -10, ARENA_LENGTH);   
+	glVertex3f(ARENA_WIDTH, 0, ARENA_LENGTH);   
 	glColor3f(0.0, 0.0, 0.4);             
-	glVertex3f(ARENA_WIDTH, -10, -ARENA_LENGTH);   
+	glVertex3f(ARENA_WIDTH, 0, -ARENA_LENGTH);   
 	glColor3f(0.0, 0.0, 0.8);           
 	glEnd(); 
 
