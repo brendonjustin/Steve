@@ -115,7 +115,7 @@ void Player::drawCat(){
 	//glBindTexture(GL_TEXTURE_2D, *(texFrames+0));
 
 	//	Rotate texture every 8 calls to draw, making an animation
-	glBindTexture(GL_TEXTURE_2D, *(texFrames+((++frameCount)/8)));
+	glBindTexture(GL_TEXTURE_2D, *(texFrames+(frameCount++/8)));
 	frameCount = frameCount % 48;
 
 	glBegin(GL_QUADS);
