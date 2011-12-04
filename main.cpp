@@ -47,7 +47,7 @@ static GLuint textureFrames[6];
 
 static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
 
-static const int ARENA_HEIGHT = 500;
+static const int ARENA_HEIGHT = 200;
 static const int ARENA_WIDTH = 100;
 static const int ARENA_LENGTH = 100;
 
@@ -55,7 +55,7 @@ static const unsigned int TRAIL_HEIGHT = 10;
 
 static const GLdouble CAM_RIGHT = 50;
 static const GLdouble CAM_TOP = 50;
-static const GLdouble CAM_BACK = 100;
+static const GLdouble CAM_BACK = 300;
 static const GLdouble CAM_FWD = 1000;
 
 static const unsigned int CAM_BACK_DIST = 3;
@@ -169,6 +169,8 @@ int CatCollision(float x, float z, float a, int d)
 // Drawing routine.
 void drawScene(void)
 {
+	glClear(GL_DEPTH_BUFFER_BIT);
+
 	// -- player 1 ----------------------------------------------------
 	Point player1Pt = player1->positions[player1->positions.size() - 1];
 	Point player1Pt2;
@@ -439,6 +441,7 @@ void resize(int w, int h)
 	glLoadIdentity();
 	//glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 1000.0);
 	glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, -CAM_BACK, CAM_FWD);
+	//glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, CAM_FWD, CAM_BACK);
 
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -501,6 +504,9 @@ int main(int argc, char **argv)
 	glutInitWindowSize(width, height);
 	glutInitWindowPosition(100, 100); 
 	glutCreateWindow ("steve"); 
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
 	setup(); 
 
