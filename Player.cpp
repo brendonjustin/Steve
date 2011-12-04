@@ -120,8 +120,7 @@ void Player::drawCat(){
 	glVertex3f( right, top,   0);
 	glVertex3f(-right, top,   0);
 
-	//	Right side?
-	//	Currently draws nyan cat upside-down
+	//	Right side
 	glTexCoord2f(0.0, 0.0); glVertex3f(-right,   0,   0);
 	glTexCoord2f(1.0, 0.0); glVertex3f(-right,   0, fwd);
 	glTexCoord2f(1.0, 1.0); glVertex3f(-right, top, fwd);
@@ -148,6 +147,7 @@ void Player::drawCat(){
 	glEnd();
 	glFlush();
 	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 }
 
 void Player::draw() {
