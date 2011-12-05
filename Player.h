@@ -21,10 +21,11 @@ struct Point {
 
 class Player {
 public:
-	static const float right;
-	static const float top;
-	static const float bot;
-	static const float fwd;
+	static const float RIGHT;
+	static const float TOP;
+	static const float BOT;
+	static const float FWD;
+	static const float BACK;
 
 	float playerColor[3];
 	GLuint *texFrames;
