@@ -171,6 +171,7 @@ int CatCollision(float x, float z, float a, int d)
 // Drawing routine.
 void drawScene(void)
 {
+        GLfloat pixel[3];
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LEQUAL);
@@ -188,6 +189,9 @@ void drawScene(void)
 
 	glLoadIdentity();
 	glViewport(0, height/2.0, width, height/2.0);
+
+        float temp1 = player1Pt.z*30;
+        float temp2 = player1Pt.x*30;
 
 	// Locate the camera behind, and off to the side, of cat 
 	gluLookAt(player1Pt.x + CAM_BACK_DIST * sin( player1->direction * M_PI_2) - CAM_DIAG_LEFT_DIST * cos( player1->direction * M_PI_2), 
@@ -233,9 +237,9 @@ void drawScene(void)
 
         //area for map
         glRectf(-width*12.4, -height*11.4, -width*12.4 + ARENA_WIDTH*62, -height*11.5 +ARENA_LENGTH*62);
-        glBegin(GL_LINES);
 
         //lines for player
+        glBegin(GL_LINES);
         glColor3fv(player1color);
         for(int i=0; i < player1Pts->size() - 1; ++i) {
                 player1Pt = (*player1Pts)[i];
@@ -246,19 +250,26 @@ void drawScene(void)
                 glVertex3f(player1Pt.z*30-width*9.4, player1Pt.x*30-height*7.0, 0);
                 //cout << k << endl;
         }
+        glEnd();
 
         //looking at pixel look for collision, not infront
-        GLfloat pixel[3];
-        glReadPixels(0, 0, 1, 1, GL_RGB , GL_FLOAT , pixel);
+        glPointSize(5.0f);
+        glBegin(GL_POINTS);
+        glVertex3f(temp1-width*9.4 , temp2 -height*7.0, 0.0);
+        glEnd();
+
+        cout <<  temp1-width*9.4 << "   " <<  temp2 -height*7.0<< endl;
+
+        glReadPixels(temp1-width*9.4, temp2 -height*7.0, 1, 1, GL_RGB , GL_FLOAT , pixel);
         if(glGetError() != GL_NO_ERROR)
             printf("opengl error");
         //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
-        printf("red %f\n", pixel[0]);
-        printf("green %f\n", pixel[2]);
-        printf("blue %f\n", pixel[3]);
+        //printf("red %f\n", pixel[0]);
+        //printf("green %f\n", pixel[2]);
+        //printf("blue %f\n", pixel[3]);
         memset(pixel, 0, 3*sizeof(GLfloat));
         //clear array
-        glEnd();
+
 	glPopMatrix();
 
 
