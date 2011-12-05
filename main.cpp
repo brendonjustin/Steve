@@ -84,7 +84,7 @@ void writeBitmapString(void *font, char *string)
 	for (c = string; *c != '\0'; c++) glutBitmapCharacter(font, *c);
 }  
 
-void drawWallFloors ()
+void drawBackWallsAndFloors ()
 {
 	glPushMatrix();
 
@@ -98,26 +98,12 @@ void drawWallFloors ()
 	glVertex3f(ARENA_WIDTH, 0, -ARENA_LENGTH);
 	glColor3f(0.0, 0.0, 0.8);       
 
-	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);  
-	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                          
-	glVertex3f(-ARENA_WIDTH, 0, ARENA_LENGTH);   
-	glColor3f(0.0, 0.0, 0.4);              
-	glVertex3f(ARENA_WIDTH, 0, ARENA_LENGTH);  
-	glColor3f(0.0, 0.0, 0.8);         
-
-	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);  
-	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                         
-	glVertex3f(-ARENA_WIDTH, 0, ARENA_LENGTH); 
-	glColor3f(0.0, 0.0, 0.4);               
-	glVertex3f(-ARENA_WIDTH, 0, -ARENA_LENGTH);  
-	glColor3f(0.0, 0.0, 0.8);  
-
 	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);  
 	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                         
 	glVertex3f(ARENA_WIDTH, 0, ARENA_LENGTH);   
 	glColor3f(0.0, 0.0, 0.4);             
 	glVertex3f(ARENA_WIDTH, 0, -ARENA_LENGTH);   
-	glColor3f(0.0, 0.0, 0.8);           
+
 	glEnd(); 
 
 	// tron lit floor
@@ -137,6 +123,35 @@ void drawWallFloors ()
 	}
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glPopMatrix();
+}
+
+void drawFrontWalls () {
+	glPushMatrix();
+
+	//	Enable transparency for these walls
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Draw walls of arena
+	glColor4f(0.0, 0.0, 0.8, 0.4);
+	glBegin(GL_QUADS);
+	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, -ARENA_LENGTH);  
+	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                         
+	glVertex3f(-ARENA_WIDTH, 0, ARENA_LENGTH); 
+	glColor4f(0.0, 0.0, 0.4, 0.4);
+	glVertex3f(-ARENA_WIDTH, 0, -ARENA_LENGTH);  
+	glColor4f(0.0, 0.0, 0.8, 0.4);
+
+	glVertex3f(ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);  
+	glVertex3f(-ARENA_WIDTH, ARENA_HEIGHT, ARENA_LENGTH);                          
+	glVertex3f(-ARENA_WIDTH, 0, ARENA_LENGTH);   
+	glColor4f(0.0, 0.0, 0.4, 0.4);
+	glVertex3f(ARENA_WIDTH, 0, ARENA_LENGTH);  
+
+	glEnd();
+	glDisable(GL_BLEND);
 
 	glPopMatrix();
 }
@@ -211,11 +226,13 @@ void drawScene(void)
 		0.0);
 
 	//	draw walls and floor
-	drawWallFloors();
+	drawBackWallsAndFloors();
 
 	//	draw players' cats and trails
 	player1->draw();
 	player2->draw();
+
+	drawFrontWalls();
 
 	if(isCollision){
 		glPushMatrix();
@@ -313,11 +330,13 @@ void drawScene(void)
 			1.0, 
 			0.0);
 
-		drawWallFloors();
+		drawBackWallsAndFloors();
 
 		// draw players' cats and trails
 		player1->draw();
 		player2->draw();
+
+		drawFrontWalls();
 
 		//write player 2
 		glPushMatrix();
