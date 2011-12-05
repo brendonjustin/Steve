@@ -23,6 +23,7 @@ class Player {
 public:
 	static const float right;
 	static const float top;
+	static const float bot;
 	static const float fwd;
 
 	float playerColor[3];

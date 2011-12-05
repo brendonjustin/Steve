@@ -18,10 +18,11 @@ static const float M_PI = 3.14159265;
 static const float M_PI_2 = 1.57079633;
 #endif
 
-static const unsigned int TRAIL_HEIGHT = 10;
+static const unsigned int TRAIL_HEIGHT = 15;
 
 const float Player::right = 0.25;
-const float Player::top = 100;
+const float Player::top = 85;
+const float Player::bot = -15;
 const float Player::fwd = 20;
 
 Player::Player(GLuint *textureFrames, GLuint *rainbowTexture) {
@@ -122,32 +123,32 @@ void Player::drawCat(){
 	glBegin(GL_QUADS);
 
 	//	Back side?
-	glVertex3f(-right,   0,   0);
-	glVertex3f( right,   0,   0);
+	glVertex3f(-right, bot,   0);
+	glVertex3f( right, bot,   0);
 	glVertex3f( right, top,   0);
 	glVertex3f(-right, top,   0);
 
 	//	Right side
-	glTexCoord2f(0.0, 0.0); glVertex3f(-right,   0,   0);
-	glTexCoord2f(1.0, 0.0); glVertex3f(-right,   0, fwd);
+	glTexCoord2f(0.0, 0.0); glVertex3f(-right, bot,   0);
+	glTexCoord2f(1.0, 0.0); glVertex3f(-right, bot, fwd);
 	glTexCoord2f(1.0, 1.0); glVertex3f(-right, top, fwd);
 	glTexCoord2f(0.0, 1.0); glVertex3f(-right, top,   0);
 
 	//	Left side
-	glTexCoord2f(1.0, 0.0); glVertex3f( right,   0, fwd);
-	glTexCoord2f(0.0, 0.0); glVertex3f( right,   0,   0);
+	glTexCoord2f(1.0, 0.0); glVertex3f( right, bot, fwd);
+	glTexCoord2f(0.0, 0.0); glVertex3f( right, bot,   0);
 	glTexCoord2f(0.0, 1.0); glVertex3f( right, top,   0);
 	glTexCoord2f(1.0, 1.0); glVertex3f( right, top, fwd);
 
 	//	Bottom side?
-	glVertex3f(-right,   0,   0);
-	glVertex3f( right,   0,   0);
-	glVertex3f( right,   0, fwd);
-	glVertex3f(-right,   0, fwd);
+	glVertex3f(-right, bot,   0);
+	glVertex3f( right, bot,   0);
+	glVertex3f( right, bot, fwd);
+	glVertex3f(-right, bot, fwd);
 
 	//	Front side?
-	glVertex3f(-right,   0, fwd);
-	glVertex3f( right,   0, fwd);
+	glVertex3f(-right, bot, fwd);
+	glVertex3f( right, bot, fwd);
 	glVertex3f( right, top, fwd);
 	glVertex3f(-right, top, fwd);
 
@@ -170,7 +171,7 @@ void Player::drawTrail() {
 
 	glBindTexture( GL_TEXTURE_2D, *rainbowTex );
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	//glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
 	glBegin(GL_QUADS);
 
@@ -185,8 +186,8 @@ void Player::drawTrail() {
 		//	Top left, top right, bottom right, bottom left
 		glTexCoord2f(0.0, 1.0); glVertex3f(playerPt.x, TRAIL_HEIGHT, playerPt.z);
 		glTexCoord2f(1.0, 1.0); glVertex3f(playerPt2.x, TRAIL_HEIGHT, playerPt2.z);
-		glTexCoord2f(1.0, 0.0); glVertex3f(playerPt2.x, 0, playerPt2.z);
-		glTexCoord2f(0.0, 0.0); glVertex3f(playerPt.x, 0, playerPt.z);
+		glTexCoord2f(1.0, 0.0); glVertex3f(playerPt2.x, 5, playerPt2.z);
+		glTexCoord2f(0.0, 0.0); glVertex3f(playerPt.x, 5, playerPt.z);
 	}
 
 	glEnd();
