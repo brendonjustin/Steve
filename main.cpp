@@ -249,11 +249,6 @@ void drawScene(void)
         gluOrtho2D(-width/2, 0, 0, height/2);
         glDisable(GL_DEPTH_TEST);
 
-        //player 1
-        glColor3fv(player1color);
-        glRasterPos3f(-width*12.4, height*10, 0);
-        writeBitmapString((void*)font, (char*)"PLAYER ONE");
-
         //MINI MAP
         glColor3f(1.0, 1.0, 1.0);
         //semi transparent menu would be AWESOME
@@ -337,13 +332,6 @@ void drawScene(void)
 		player2->draw();
 
 		drawFrontWalls();
-
-		//write player 2
-		glPushMatrix();
-		glTranslatef(0.0, 0.0, -30.0);
-		glColor3fv(player2color);
-		glRasterPos3f(-28.0, 25.0, 0.0);
-		writeBitmapString((void*)font, (char*)"PLAYER TWO"); 
 	}
 
 	if(isCollision){
@@ -360,7 +348,7 @@ void drawScene(void)
 }
 
 // Timer function.
-void animate(int value)
+void update(int value)
 {
 	float goal, tempAngle, stillturn=0;
 	Point player1Pt = player1->positions[player1->positions.size() - 1];
@@ -375,70 +363,9 @@ void animate(int value)
 			if (isAnimate) 
 			{
 			}
-//			if (animateLeft)
-//			{
-//				//dissable right while going left
-//				isAnimate=0;
-//				if(storeOrigPos)
-//				{
-//					goal = angle1+90.0;
-//					if(goal>360.0){goal = goal-360.0; stillturn=1;}
-//					turnGoal = goal;
-//					//cout << "turning" << goal << endl;
-//					storeOrigPos = 0;
-//				}
-//				else goal = turnGoal;
-//				tempAngle = angle1;
-//				if(angle1<goal||stillturn)
-//				{	
-//					tempAngle=tempAngle+10.0;
-//					if (tempAngle > 360.0) tempAngle -= 360.0;
-//					if (tempAngle < 0.0) tempAngle += 360.0;
-//					angle1 = tempAngle;
-//					//cout << goal << "   " << angle << endl;
-//				}
-//				else
-//				{
-//					animateLeft = 0;
-//					storeOrigPos = 1;
-//					isAnimate = 1;
-//				}
-//			
-//			}
-//
-//			if (animateRight)
-//			{
-//				isAnimate=0;
-//				if(storeOrigPos)
-//				{
-//					goal = angle1-90.0;
-//					if(goal<0.0){goal = goal+360.0; stillturn=1;}
-//					turnGoal = goal;
-//					//cout << "turning" << goal << endl;
-//					storeOrigPos = 0;
-//
-//				}
-//				else goal = turnGoal;
-//				tempAngle = angle1;
-//				if(angle1>goal||stillturn)
-//				{	
-//					tempAngle=tempAngle-10.0;
-//					if (tempAngle > 360.0) tempAngle -= 360.0;
-//					if (tempAngle < 0.0) tempAngle += 360.0;
-//					angle1 = tempAngle;
-//					//cout << goal << "   " << angle << endl;
-//				}
-//				else
-//				{
-//					animateRight = 0;
-//					storeOrigPos = 1;
-//					isAnimate = 1;
-//				}
-//			
-//			}
 		}
 	}
-	glutTimerFunc(animationPeriod, animate, 1);
+	glutTimerFunc(animationPeriod, update, 1);
 	glutPostRedisplay();
 }
 
@@ -542,7 +469,7 @@ int main(int argc, char **argv)
 	glutReshapeFunc(resize);  
 	glutKeyboardFunc(keyInput);
 	glutSpecialFunc(specialKeyInput);
-	glutTimerFunc(5, animate, 1);
+	glutTimerFunc(5, update, 1);
 	glutMainLoop(); 
 
 	return 0;  
