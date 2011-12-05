@@ -32,41 +32,44 @@ static float player2color[3] = {0.0, 0.0, 1.0};
 Player *player1;
 Player *player2;
 
+//	Player texture information
 static const string NYAN_TEXTURES[6] = { "frame00.png", "frame01.png", "frame02.png", "frame03.png", "frame04.png", "frame05.png" };
 static int tex_width = 400, tex_height = 280;
 static GLuint textureFrames[6];
 
+//	Trail texture information
 static const string RAINBOW_TRAIL_TEXTURE = "rainbow.png";
-static int rainbow_tex_width = 98, rainbow_tex_height = 92;
+static int rainbow_tex_width = 398, rainbow_tex_height = 107;
 static GLuint rainbowTexture;
 
-static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
-
-static const int ARENA_HEIGHT = 200;
+//	the width and length of the playing area
 static const int ARENA_WIDTH = 100;
 static const int ARENA_LENGTH = 100;
 
+//	the height of the walls
+static const int ARENA_HEIGHT = 200;
+
+//	Camera field of view values
 static const GLdouble CAM_RIGHT = 50;
 static const GLdouble CAM_TOP = 50;
 static const GLdouble CAM_BACK = 300;
 static const GLdouble CAM_FWD = 1000;
 
+//	Viewport origin differences from each player's position
 static const unsigned int CAM_BACK_DIST = 3;
 static const unsigned int CAM_DIAG_LEFT_DIST = 2;
 static const unsigned int CAM_DIAG_UP_DIST = 10;
 
-static int isAnimate = 1; // Animated?   //change back to 0 once have the if commands
 static int isCollision = 0;
-static int animateRight = 0; //animation for turning right
-static int animateLeft = 0; //animation for turning left
-static int p1turn = 0;
-static int p2turn = 0;
-static int turnGoal = 0;
 
-static int animationPeriod = 10; // Time interval between frames.
-static int storeOrigPos = 1;
+//	Time interval between frames.
+static int animationPeriod = 10;
 
-static const int width = 1000, height = 700;
+//	The size of the GLUT window.
+static int width = 1000, height = 700;
+
+//	Font used for writing text.
+static const long font = (long)GLUT_BITMAP_8_BY_13;
 
 // Routine to draw a bitmap character string.
 void writeBitmapString(void *font, char *string)
@@ -349,9 +352,6 @@ void update(int value)
 
                 isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90, 3);
 		if(!isCollision){
-			if (isAnimate) 
-			{
-			}
 		}
 	}
 	glutTimerFunc(animationPeriod, update, 1);
@@ -394,21 +394,15 @@ void resize(int w, int h)
 // Keyboard input processing routine.
 void keyInput(unsigned char key, int x, int y)
 {
-	p1turn = 0;
-	p2turn = 0;
 	switch(key) {
 	case 27:
 		// esc key
 		exit(0);
 		break;         
 	case 'a':
-		animateLeft = 1;
-		p1turn = 1;
 		player1->turn(false);
 		break;
 	case 'd':
-		animateRight = 1;
-		p1turn = 1;
 		player1->turn(true);
 		break;
 	case 32:
@@ -424,11 +418,9 @@ void specialKeyInput(int key, int x, int y)
 
 	switch(key) {
 	case GLUT_KEY_LEFT: 
-		animateLeft = 1;
 		player2->turn(false);
 		break;
 	case GLUT_KEY_RIGHT:
- 		animateRight = 1;
 		player2->turn(true);
 		break;
 	}
