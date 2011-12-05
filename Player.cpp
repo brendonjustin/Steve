@@ -22,6 +22,8 @@ static const unsigned int TRAIL_HEIGHT = 15;
 static const unsigned int FRAME_INTERVAL = 12;
 static const unsigned int FRAME_CYCLE_INTERVAL = 72;
 
+static const unsigned int INVERSE_CAT_SPEED = 1;
+
 const float Player::RIGHT = 0.25;
 const float Player::TOP = 85;
 const float Player::BOT = -15;
@@ -93,8 +95,8 @@ void Player::turn(bool turnRight) {
 Point Player::tick() {
 	Point currentPt = positions[positions.size() - 1];
 
-	currentPt.x -= sin(direction * M_PI_2) / 10;
-	currentPt.z -= cos(direction * M_PI_2) / 10;
+	currentPt.x -= sin(direction * M_PI_2) / INVERSE_CAT_SPEED;
+	currentPt.z -= cos(direction * M_PI_2) / INVERSE_CAT_SPEED;
 
 	positions[positions.size() - 1] = currentPt;
 

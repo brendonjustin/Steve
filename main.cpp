@@ -43,8 +43,8 @@ static int rainbow_tex_width = 398, rainbow_tex_height = 107;
 static GLuint rainbowTexture;
 
 //	the width and length of the playing area
-static const int ARENA_WIDTH = 100;
-static const int ARENA_LENGTH = 100;
+static const int ARENA_WIDTH = 1000;
+static const int ARENA_LENGTH = 1000;
 
 //	the height of the walls
 static const int ARENA_HEIGHT = 200;
