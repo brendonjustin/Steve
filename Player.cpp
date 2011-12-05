@@ -171,22 +171,34 @@ void Player::drawTrail() {
 
 	glBindTexture( GL_TEXTURE_2D, *rainbowTex );
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	//glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
 	glBegin(GL_QUADS);
 
 	Point playerPt;
 	Point playerPt2;
 
+	float xDiff = 0.0, zDiff = 0.0;
+	float rptCount = 1.0;
+
 	for(int i=0; i < positions.size() - 1; ++i) {
 		playerPt = positions[i];
 		playerPt2 = positions[i+1];
 
+		xDiff = fabs(playerPt.x - playerPt2.x);
+		zDiff = fabs(playerPt.z - playerPt2.z);
+
+		if (xDiff > zDiff) {
+			rptCount = xDiff / 10;
+		} else {
+			rptCount = zDiff / 10;
+		}
+
 		//cout << playerPt.x << "  " << playerPt.z << "  ";
 		//	Top left, top right, bottom right, bottom left
 		glTexCoord2f(0.0, 1.0); glVertex3f(playerPt.x, TRAIL_HEIGHT, playerPt.z);
-		glTexCoord2f(1.0, 1.0); glVertex3f(playerPt2.x, TRAIL_HEIGHT, playerPt2.z);
-		glTexCoord2f(1.0, 0.0); glVertex3f(playerPt2.x, 5, playerPt2.z);
+		glTexCoord2f(rptCount, 1.0); glVertex3f(playerPt2.x, TRAIL_HEIGHT, playerPt2.z);
+		glTexCoord2f(rptCount, 0.0); glVertex3f(playerPt2.x, 5, playerPt2.z);
 		glTexCoord2f(0.0, 0.0); glVertex3f(playerPt.x, 5, playerPt.z);
 	}
 
