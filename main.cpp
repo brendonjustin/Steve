@@ -254,15 +254,17 @@ void drawScene(void)
 
         glPointSize(5.0f);
         glBegin(GL_POINTS);
-        glVertex3f(temp1-width*9.4 , temp2 -height*7.0, 0.0);
-        glVertex3f(-width*12.7, height*12.7, 0.0);
+        glVertex3f(temp1-width*9.4, temp2 -height*7.0, 0.0);
+        //glVertex3f(-width*6.45, -height*12.2, 0.0);  // here when read (width/4, height/2)
+        //glVertex3f((-width)*6.45, (-height+100)*12.2, 0.0);// here when read (width/4, height/2+100/4)
+        //glVertex3f(0, height*12.7, 0.0);
         glEnd();
 
         //cout <<  temp1-width*9.4 +8503<< "   " <<  temp2 -height*7.0+4000<< endl;
 
         //TEST
-        glColor3f(1.0, 1.0, 1.0);
-        glRectf(-width*6.5, -height*12.2, -width*6.45, -height*12.3); //READING PIXEL HERE ...
+        glColor3f(1.0, 0.0, 0.0);
+        //glRectf(-width*6.5, -height*8.8, -width*6.45, -height*8.6); //READING PIXEL HERE ...
 
         //looking at pixel look for collision, not infront
         glReadPixels(width/4, height/2, 1, 1, GL_RGB , GL_FLOAT , pixel);
