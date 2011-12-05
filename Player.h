@@ -27,6 +27,7 @@ public:
 
 	float playerColor[3];
 	GLuint *texFrames;
+	GLuint *rainbowTex;
 	unsigned int frameCount;
 
 	unsigned int catList; // Display lists base index.
@@ -37,12 +38,12 @@ public:
 	void turn(bool);
 	void draw();
 	Point tick();
-	Player(GLuint *);
-	Player(float, float, uint8_t, GLuint *);
+	Player(GLuint *, GLuint *);
+	Player(float, float, uint8_t, GLuint *, GLuint *);
 
 private:
 	bool turning;
-	void init(float, float, uint8_t, GLuint *);
+	void init(float, float, uint8_t, GLuint *, GLuint *);
 	void drawCat();
 	void drawTrail();
 };

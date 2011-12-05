@@ -45,6 +45,10 @@ static const string NYAN_TEXTURES[6] = { "frame00.png", "frame01.png", "frame02.
 static int tex_width = 400, tex_height = 280;
 static GLuint textureFrames[6];
 
+static const string RAINBOW_TRAIL_TEXTURE = "rainbow.png";
+static int rainbow_tex_width = 98, rainbow_tex_height = 92;
+static GLuint rainbowTexture;
+
 static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
 
 static const int ARENA_HEIGHT = 200;
@@ -424,8 +428,10 @@ void setup(void)
 		}
 	}
 
-	player1 = new Player(30, 30, 0, textureFrames);
-	player2 = new Player(80, 80, 1, textureFrames);
+	rainbowTexture = loadTexture(RAINBOW_TRAIL_TEXTURE, rainbow_tex_width, rainbow_tex_height);
+
+	player1 = new Player(30, 30, 0, textureFrames, &rainbowTexture);
+	player2 = new Player(80, 80, 1, textureFrames, &rainbowTexture);
 
 	glClearColor(1.0, 1.0, 1.0, 0.0);  
 }

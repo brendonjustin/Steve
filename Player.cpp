@@ -24,15 +24,15 @@ const float Player::right = 0.25;
 const float Player::top = 100;
 const float Player::fwd = 20;
 
-Player::Player(GLuint *textureFrames) {
-	this->init(10, 10, 0, textureFrames);
+Player::Player(GLuint *textureFrames, GLuint *rainbowTexture) {
+	this->init(10, 10, 0, textureFrames, rainbowTexture);
 }
 
-Player::Player(float initialX, float initialZ, uint8_t initialDirection, GLuint *textureFrames) {
-	this->init(initialX, initialZ, initialDirection, textureFrames);
+Player::Player(float initialX, float initialZ, uint8_t initialDirection, GLuint *textureFrames, GLuint *rainbowTexture) {
+	this->init(initialX, initialZ, initialDirection, textureFrames, rainbowTexture);
 }
 
-void Player::init(float initialX, float initialZ, uint8_t initialDirection, GLuint *textureFrames) {
+void Player::init(float initialX, float initialZ, uint8_t initialDirection, GLuint *textureFrames, GLuint *rainbowTexture) {
 	frameCount = 0;
 
 	turning = false;
@@ -48,6 +48,7 @@ void Player::init(float initialX, float initialZ, uint8_t initialDirection, GLui
 
 	//	Use the textures passed in from init
 	texFrames = textureFrames;
+	rainbowTex = rainbowTexture;
 
 	playerColor[0] = 1.0;
 	playerColor[1] = 0.0;
@@ -131,7 +132,7 @@ void Player::drawCat(){
 	glTexCoord2f(1.0, 0.0); glVertex3f(-right,   0, fwd);
 	glTexCoord2f(1.0, 1.0); glVertex3f(-right, top, fwd);
 	glTexCoord2f(0.0, 1.0); glVertex3f(-right, top,   0);
-	 
+
 	//	Left side
 	glTexCoord2f(1.0, 0.0); glVertex3f( right,   0, fwd);
 	glTexCoord2f(0.0, 0.0); glVertex3f( right,   0,   0);
@@ -143,7 +144,7 @@ void Player::drawCat(){
 	glVertex3f( right,   0,   0);
 	glVertex3f( right,   0, fwd);
 	glVertex3f(-right,   0, fwd);
- 
+
 	//	Front side?
 	glVertex3f(-right,   0, fwd);
 	glVertex3f( right,   0, fwd);
@@ -161,7 +162,17 @@ void Player::drawCat(){
 void Player::drawTrail() {
 	glPushMatrix();
 	glColor3fv(playerColor);
-	glBegin(GL_QUADS); 
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	glBindTexture( GL_TEXTURE_2D, *rainbowTex );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+	glBegin(GL_QUADS);
 
 	Point playerPt;
 	Point playerPt2;
@@ -172,13 +183,15 @@ void Player::drawTrail() {
 
 		//cout << playerPt.x << "  " << playerPt.z << "  ";
 		//	Top left, top right, bottom right, bottom left
-		glVertex3f(playerPt.x, TRAIL_HEIGHT, playerPt.z);
-		glVertex3f(playerPt2.x, TRAIL_HEIGHT, playerPt2.z);
-		glVertex3f(playerPt2.x, 0, playerPt2.z);
-		glVertex3f(playerPt.x, 0, playerPt.z);
+		glTexCoord2f(0.0, 1.0); glVertex3f(playerPt.x, TRAIL_HEIGHT, playerPt.z);
+		glTexCoord2f(1.0, 1.0); glVertex3f(playerPt2.x, TRAIL_HEIGHT, playerPt2.z);
+		glTexCoord2f(1.0, 0.0); glVertex3f(playerPt2.x, 0, playerPt2.z);
+		glTexCoord2f(0.0, 0.0); glVertex3f(playerPt.x, 0, playerPt.z);
 	}
 
 	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 }
 
 void Player::draw() {
