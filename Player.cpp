@@ -193,6 +193,8 @@ void Player::drawTrail() {
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
+
+	glPopMatrix();
 }
 
 void Player::draw() {
