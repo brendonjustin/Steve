@@ -282,9 +282,12 @@ void drawScene(void)
         //glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
 
         //looking at pixel look for collision, not infront
+        glFlush();
         glReadPixels(width/4+tempx/4, height/2+tempy/4, 1, 1, GL_RGB , GL_FLOAT , pixel);
+        int k = glGetError();
         if(glGetError() != GL_NO_ERROR)
-            printf("opengl error");
+            printf("opengl error: ");
+        cout << glGetError() << endl;
         //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
         printf("red %f\n", pixel[0]);
         printf("green %f\n", pixel[2]);
