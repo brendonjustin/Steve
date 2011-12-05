@@ -24,16 +24,7 @@
 using namespace std;
 
 // Globals.
-#ifndef M_PI
-static const float M_PI = 3.14159265;
-#endif
-
-#ifndef M_PI_2
-static const float M_PI_2 = 1.57079633;
-#endif
-
 static bool paused = false;
-static const bool enablePlayer2 = true;
 
 static float player1color[3] = {1.0, 0.0, 0.0}; 
 static float player2color[3] = {0.0, 0.0, 1.0};
@@ -301,38 +292,36 @@ void drawScene(void)
 
 
 	//-- repeat for player 2 ---------------------------------------------
-        if (enablePlayer2) {
-		Point player2Pt = player2->positions[player2->positions.size() - 1];
-		vector<Point> *player2Pts;
-		player2Pts = &(player2->positions);
+	Point player2Pt = player2->positions[player2->positions.size() - 1];
+	vector<Point> *player2Pts;
+	player2Pts = &(player2->positions);
 
-                //Drawing 3D
-		glViewport(0, 0, width, height/2.0);
-		glLoadIdentity();
+        //Drawing 3D
+	glViewport(0, 0, width, height/2.0);
+	glLoadIdentity();
 
-        	float temp1 = player2Pt.z*30;
-        	float temp2 = player2Pt.x*30;
+	temp1 = player2Pt.z*30;
+	temp2 = player2Pt.x*30;
 
-		//  Locate the camera behind, and off to the side, of cat initially.
-		//  Don't rotate the camera.
-		gluLookAt(player2Pt.x - CAM_DIAG_LEFT_DIST, 
-			CAM_DIAG_UP_DIST, 
-			player2Pt.z + CAM_BACK_DIST,
-			player2Pt.x,
-			CAM_DIAG_UP_DIST - 8,
-			player2Pt.z, 
-			0.0, 
-			1.0, 
-			0.0);
+	//  Locate the camera behind, and off to the side, of cat initially.
+	//  Don't rotate the camera.
+	gluLookAt(player2Pt.x - CAM_DIAG_LEFT_DIST, 
+		CAM_DIAG_UP_DIST, 
+		player2Pt.z + CAM_BACK_DIST,
+		player2Pt.x,
+		CAM_DIAG_UP_DIST - 8,
+		player2Pt.z, 
+		0.0, 
+		1.0, 
+		0.0);
 
-		drawBackWallsAndFloors();
+	drawBackWallsAndFloors();
 
-		// draw players' cats and trails
-		player1->draw();
-		player2->draw();
+	// draw players' cats and trails
+	player1->draw();
+	player2->draw();
 
-		drawFrontWalls();
-	}
+	drawFrontWalls();
 
 	if(isCollision){
 		glPushMatrix();
@@ -370,7 +359,7 @@ void update(int value)
 }
 
 // Initialization routine.
-void setup(void) 
+void init(void) 
 {
 	//	Load the nyan cat frames!
 	for (unsigned int i = 0; i < 6; ++i) {
@@ -397,9 +386,7 @@ void resize(int w, int h)
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h); 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 1000.0);
 	glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, -CAM_BACK, CAM_FWD);
-	//glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, CAM_FWD, CAM_BACK);
 
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -463,7 +450,7 @@ int main(int argc, char **argv)
 	glutInitWindowPosition(100, 100); 
 	glutCreateWindow ("steve"); 
 
-	setup(); 
+	init(); 
 
 	glutDisplayFunc(drawScene); 
 	glutReshapeFunc(resize);  
