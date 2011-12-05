@@ -231,7 +231,7 @@ void drawScene(void)
         writeBitmapString((void*)font, (char*)"PLAYER ONE");
 
         //MINI MAP
-        glColor3f(.2, .2, .2);
+        glColor3f(1.0, 1.0, 1.0);
         //semi transparent menu would be AWESOME
         //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
@@ -252,23 +252,27 @@ void drawScene(void)
         }
         glEnd();
 
-        //looking at pixel look for collision, not infront
         glPointSize(5.0f);
         glBegin(GL_POINTS);
         glVertex3f(temp1-width*9.4 , temp2 -height*7.0, 0.0);
+        glVertex3f(-width*12.7, height*12.7, 0.0);
         glEnd();
 
-        cout <<  temp1-width*9.4 << "   " <<  temp2 -height*7.0<< endl;
+        //cout <<  temp1-width*9.4 +8503<< "   " <<  temp2 -height*7.0+4000<< endl;
 
-        glReadPixels(temp1-width*9.4, temp2 -height*7.0, 1, 1, GL_RGB , GL_FLOAT , pixel);
+        //TEST
+        glColor3f(1.0, 1.0, 1.0);
+        glRectf(-width*6.5, -height*12.2, -width*6.45, -height*12.3); //READING PIXEL HERE ...
+
+        //looking at pixel look for collision, not infront
+        glReadPixels(width/4, height/2, 1, 1, GL_RGB , GL_FLOAT , pixel);
         if(glGetError() != GL_NO_ERROR)
             printf("opengl error");
         //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
-        //printf("red %f\n", pixel[0]);
-        //printf("green %f\n", pixel[2]);
-        //printf("blue %f\n", pixel[3]);
+        printf("red %f\n", pixel[0]);
+        printf("green %f\n", pixel[2]);
+        printf("blue %f\n", pixel[3]);
         memset(pixel, 0, 3*sizeof(GLfloat));
-        //clear array
 
 	glPopMatrix();
 
@@ -318,7 +322,6 @@ void drawScene(void)
 	}
 
 	glDisable(GL_DEPTH_TEST);
-
 	glutSwapBuffers();
 }
 
