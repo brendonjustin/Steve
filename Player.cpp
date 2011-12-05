@@ -19,11 +19,14 @@ static const float M_PI_2 = 1.57079633;
 #endif
 
 static const unsigned int TRAIL_HEIGHT = 15;
+static const unsigned int FRAME_INTERVAL = 12;
+static const unsigned int FRAME_CYCLE_INTERVAL = 72;
 
-const float Player::right = 0.25;
-const float Player::top = 85;
-const float Player::bot = -15;
-const float Player::fwd = 20;
+const float Player::RIGHT = 0.25;
+const float Player::TOP = 85;
+const float Player::BOT = -15;
+const float Player::FWD = 20;
+const float Player::BACK = 0;
 
 Player::Player(GLuint *textureFrames, GLuint *rainbowTexture) {
 	this->init(10, 10, 0, textureFrames, rainbowTexture);
@@ -117,40 +120,40 @@ void Player::drawCat(){
 	//glBindTexture(GL_TEXTURE_2D, *(texFrames+0));
 
 	//	Rotate texture every 8 calls to draw, making an animation
-	glBindTexture(GL_TEXTURE_2D, *(texFrames+(frameCount++/8)));
-	frameCount = frameCount % 48;
+	glBindTexture(GL_TEXTURE_2D, *(texFrames+(frameCount++/FRAME_INTERVAL)));
+	frameCount = frameCount % FRAME_CYCLE_INTERVAL;
 
 	glBegin(GL_QUADS);
 
 	//	Back side?
-	glVertex3f(-right, bot,   0);
-	glVertex3f( right, bot,   0);
-	glVertex3f( right, top,   0);
-	glVertex3f(-right, top,   0);
+	glVertex3f(-RIGHT, BOT, BACK);
+	glVertex3f( RIGHT, BOT, BACK);
+	glVertex3f( RIGHT, TOP, BACK);
+	glVertex3f(-RIGHT, TOP, BACK);
 
 	//	Right side
-	glTexCoord2f(0.0, 0.0); glVertex3f(-right, bot,   0);
-	glTexCoord2f(1.0, 0.0); glVertex3f(-right, bot, fwd);
-	glTexCoord2f(1.0, 1.0); glVertex3f(-right, top, fwd);
-	glTexCoord2f(0.0, 1.0); glVertex3f(-right, top,   0);
+	glTexCoord2f(0.0, 0.0); glVertex3f(-RIGHT, BOT, BACK);
+	glTexCoord2f(1.0, 0.0); glVertex3f(-RIGHT, BOT,  FWD);
+	glTexCoord2f(1.0, 1.0); glVertex3f(-RIGHT, TOP,  FWD);
+	glTexCoord2f(0.0, 1.0); glVertex3f(-RIGHT, TOP, BACK);
 
 	//	Left side
-	glTexCoord2f(1.0, 0.0); glVertex3f( right, bot, fwd);
-	glTexCoord2f(0.0, 0.0); glVertex3f( right, bot,   0);
-	glTexCoord2f(0.0, 1.0); glVertex3f( right, top,   0);
-	glTexCoord2f(1.0, 1.0); glVertex3f( right, top, fwd);
+	glTexCoord2f(1.0, 0.0); glVertex3f( RIGHT, BOT,  FWD);
+	glTexCoord2f(0.0, 0.0); glVertex3f( RIGHT, BOT, BACK);
+	glTexCoord2f(0.0, 1.0); glVertex3f( RIGHT, TOP, BACK);
+	glTexCoord2f(1.0, 1.0); glVertex3f( RIGHT, TOP,  FWD);
 
 	//	Bottom side?
-	glVertex3f(-right, bot,   0);
-	glVertex3f( right, bot,   0);
-	glVertex3f( right, bot, fwd);
-	glVertex3f(-right, bot, fwd);
+	glVertex3f(-RIGHT, BOT, BACK);
+	glVertex3f( RIGHT, BOT, BACK);
+	glVertex3f( RIGHT, BOT,  FWD);
+	glVertex3f(-RIGHT, BOT,  FWD);
 
 	//	Front side?
-	glVertex3f(-right, bot, fwd);
-	glVertex3f( right, bot, fwd);
-	glVertex3f( right, top, fwd);
-	glVertex3f(-right, top, fwd);
+	glVertex3f(-RIGHT, BOT,  FWD);
+	glVertex3f( RIGHT, BOT,  FWD);
+	glVertex3f( RIGHT, TOP,  FWD);
+	glVertex3f(-RIGHT, TOP,  FWD);
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);

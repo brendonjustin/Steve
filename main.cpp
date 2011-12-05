@@ -34,7 +34,7 @@ Player *player2;
 
 //	Player texture information
 static const string NYAN_TEXTURES[6] = { "frame00.png", "frame01.png", "frame02.png", "frame03.png", "frame04.png", "frame05.png" };
-static int tex_width = 400, tex_height = 280;
+static int nyan_tex_width = 400, nyan_tex_height = 280;
 static GLuint textureFrames[6];
 
 //	Trail texture information
@@ -363,7 +363,7 @@ void init(void)
 {
 	//	Load the nyan cat frames!
 	for (unsigned int i = 0; i < 6; ++i) {
-		textureFrames[i] = loadTexture(NYAN_TEXTURES[i], tex_width, tex_height);
+		textureFrames[i] = loadTexture(NYAN_TEXTURES[i], nyan_tex_width, nyan_tex_height);
 
 		//	Handle errors
 		if (textureFrames[i] == 0) {
