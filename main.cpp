@@ -278,14 +278,14 @@ void drawScene(void)
 
         //2D position
         int tempx, tempy;
-        tempx = 300;
-        tempy = 400;
+        tempx = -920;  //works at 30 to -920 which is the width
+        tempy = 535;  //works from 50-535 which is the height of the mini map
         glPointSize(5.0f);
         glBegin(GL_POINTS);
         glVertex3f(temp1-width*9.4, temp2 -height*7.0, 0.0);
         //glVertex3f(-width*6.45, -height*12.2, 0.0);  // here when read (width/4, height/2)
         //glVertex3f((-width)*6.45, (-height+100)*12.2, 0.0);// here when read (width/4, height/2+100/4)
-        //glVertex3f((-width+tempx)*6.6, (-height+tempy)*12.2, 0.0);// here when read (width/4+tempx/4, height/2+tempy/4)
+        glVertex3f((-width+tempx)*6.43, (-height+tempy)*12.1, 0.0);// here when read (width/4+tempx/4, height/2+tempy/4)
         glEnd();
 
         //TEST
