@@ -33,7 +33,7 @@ static const float M_PI_2 = 1.57079633;
 #endif
 
 static bool paused = false;
-static const bool enablePlayer2 = false;
+static const bool enablePlayer2 = true;
 
 static float player1color[3] = {1.0, 0.0, 0.0}; 
 static float player2color[3] = {0.0, 0.0, 1.0};
@@ -44,6 +44,10 @@ Player *player2;
 static const string NYAN_TEXTURES[6] = { "frame00.png", "frame01.png", "frame02.png", "frame03.png", "frame04.png", "frame05.png" };
 static int tex_width = 400, tex_height = 280;
 static GLuint textureFrames[6];
+
+static const string RAINBOW_TRAIL_TEXTURE = "rainbow.png";
+static int rainbow_tex_width = 98, rainbow_tex_height = 92;
+static GLuint rainbowTexture;
 
 static const long font = (long)GLUT_BITMAP_8_BY_13; // Font selection
 
@@ -187,16 +191,18 @@ void drawScene(void)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glLoadIdentity();
 	glViewport(0, height/2.0, width, height/2.0);
+	glLoadIdentity();
+	//glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, -CAM_BACK, CAM_FWD);
 
         float temp1 = player1Pt.z*30;
         float temp2 = player1Pt.x*30;
 
-	// Locate the camera behind, and off to the side, of cat 
-	gluLookAt(player1Pt.x + CAM_BACK_DIST * sin( player1->direction * M_PI_2) - CAM_DIAG_LEFT_DIST * cos( player1->direction * M_PI_2), 
+	//  Locate the camera behind, and off to the side, of cat initially.
+	//  Don't rotate the camera.
+	gluLookAt(player1Pt.x - CAM_DIAG_LEFT_DIST, 
 		CAM_DIAG_UP_DIST, 
-		player1Pt.z + CAM_BACK_DIST * cos( player1->direction * M_PI_2) + CAM_DIAG_LEFT_DIST * sin ( player1->direction * M_PI_2), 
+		player1Pt.z + CAM_BACK_DIST,
 		player1Pt.x,
 		CAM_DIAG_UP_DIST - 8,
 		player1Pt.z, 
@@ -207,8 +213,9 @@ void drawScene(void)
 	//	draw walls and floor
 	drawWallFloors();
 
-	//	draw cat and trail
+	//	draw players' cats and trails
 	player1->draw();
+	player2->draw();
 
 	if(isCollision){
 		glPushMatrix();
@@ -288,13 +295,17 @@ void drawScene(void)
 		player2Pts = &(player2->positions);
 
                 //Drawing 3D
-		glLoadIdentity();
 		glViewport(0, 0, width, height/2.0);
+		glLoadIdentity();
 
-		// Locate the camera behind, and off to the side, of cat 
-		gluLookAt(player2Pt.x + CAM_BACK_DIST * sin( player2->direction * M_PI_2) - CAM_DIAG_LEFT_DIST * cos( player1->direction * M_PI_2), 
+        	float temp1 = player2Pt.z*30;
+        	float temp2 = player2Pt.x*30;
+
+		//  Locate the camera behind, and off to the side, of cat initially.
+		//  Don't rotate the camera.
+		gluLookAt(player2Pt.x - CAM_DIAG_LEFT_DIST, 
 			CAM_DIAG_UP_DIST, 
-			player2Pt.z + CAM_BACK_DIST * cos( player2->direction * M_PI_2) + CAM_DIAG_LEFT_DIST * sin ( player1->direction * M_PI_2), 
+			player2Pt.z + CAM_BACK_DIST,
 			player2Pt.x,
 			CAM_DIAG_UP_DIST - 8,
 			player2Pt.z, 
@@ -302,10 +313,10 @@ void drawScene(void)
 			1.0, 
 			0.0);
 
-		// draw walls and floor
 		drawWallFloors();
 
-		// draw cat and trails
+		// draw players' cats and trails
+		player1->draw();
 		player2->draw();
 
 		//write player 2
@@ -426,8 +437,10 @@ void setup(void)
 		}
 	}
 
-	player1 = new Player(30, 30, 0, textureFrames);
-	player2 = new Player(80, 80, 1, textureFrames);
+	rainbowTexture = loadTexture(RAINBOW_TRAIL_TEXTURE, rainbow_tex_width, rainbow_tex_height);
+
+	player1 = new Player(30, 30, 0, textureFrames, &rainbowTexture);
+	player2 = new Player(80, 80, 1, textureFrames, &rainbowTexture);
 
 	glClearColor(1.0, 1.0, 1.0, 0.0);  
 }
