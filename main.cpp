@@ -198,9 +198,21 @@ void drawScene(void)
         float temp2 = player1Pt.x*30;
 
 	// Locate the camera behind, and off to the side, of cat 
-	gluLookAt(player1Pt.x + CAM_BACK_DIST * sin( player1->direction * M_PI_2) - CAM_DIAG_LEFT_DIST * cos( player1->direction * M_PI_2), 
+//	gluLookAt(player1Pt.x + CAM_BACK_DIST * sin( player1->direction * M_PI_2) - CAM_DIAG_LEFT_DIST * cos( player1->direction * M_PI_2), 
+//		CAM_DIAG_UP_DIST, 
+//		player1Pt.z + CAM_BACK_DIST * cos( player1->direction * M_PI_2) + CAM_DIAG_LEFT_DIST * sin ( player1->direction * M_PI_2), 
+//		player1Pt.x,
+//		CAM_DIAG_UP_DIST - 8,
+//		player1Pt.z, 
+//		0.0, 
+//		1.0, 
+//		0.0);
+
+	//  Locate the camera behind, and off to the side, of cat initially.
+	//  Don't rotate the camera.
+	gluLookAt(player1Pt.x - CAM_DIAG_LEFT_DIST, 
 		CAM_DIAG_UP_DIST, 
-		player1Pt.z + CAM_BACK_DIST * cos( player1->direction * M_PI_2) + CAM_DIAG_LEFT_DIST * sin ( player1->direction * M_PI_2), 
+		player1Pt.z + CAM_BACK_DIST,
 		player1Pt.x,
 		CAM_DIAG_UP_DIST - 8,
 		player1Pt.z, 
