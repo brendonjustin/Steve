@@ -81,7 +81,7 @@ static int isCollision = 0;
 static int updatePeriod = 20;
 
 //	The size of the GLUT window.
-static int width = 1000, height = 700;
+static int window_width = 1000, window_height = 700;
 
 //	Font used for writing text.
 static const long font = (long)GLUT_BITMAP_8_BY_13;
@@ -181,10 +181,10 @@ int CatCollision(float x, float z, float a, int d)
     if( d == 2) { //2D
         ////TEST
         //glColor3f(1.0, 0.0, 0.0);
-        ////glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
+        ////glRectf(-window_width*4.7, -window_height*5.4, -window_width*4.6, -window_height*5.0); //READING PIXEL HERE ...
 
         ////looking at pixel look for collision, not infront
-        //glReadPixels(width/4+tempx/4, height/2+tempy/4, 1, 1, GL_RGB , GL_FLOAT , pixel);
+        //glReadPixels(window_width/4+tempx/4, window_height/2+tempy/4, 1, 1, GL_RGB , GL_FLOAT , pixel);
         //int k = glGetError();
         //if(glGetError() != GL_NO_ERROR)
         //    printf("opengl error: ");
@@ -218,7 +218,7 @@ void drawScene(void)
 
 	glPushMatrix();
 
-	glViewport(0, height/2.0, width, height/2.0);
+	glViewport(0, window_height/2.0, window_width, window_height/2.0);
 	glLoadIdentity();
 	//glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, -CAM_BACK, CAM_FWD);
 
@@ -263,7 +263,7 @@ void drawScene(void)
 	glPushMatrix();
 
         //Drawing 3D
-	glViewport(0, 0, width, height/2.0);
+	glViewport(0, 0, window_width, window_height/2.0);
 	glLoadIdentity();
 
 	//  Locate the camera behind, and off to the side, of cat initially.
@@ -301,25 +301,6 @@ void drawScene(void)
 	//	Draw the minimap
 	glCallList(minimap_list_index);
 
-	//	Read pixel values from the minimap.
-	//	Note that this is mostly wrong now.
-
-        ////TEST
-        //glColor3f(1.0, 0.0, 0.0);
-        ////glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
-
-        ////looking at pixel look for collision, not infront
-        //glReadPixels(width/4+tempx/4, height/2+tempy/4, 1, 1, GL_RGB , GL_FLOAT , pixel);
-        //int k = glGetError();
-        //if(glGetError() != GL_NO_ERROR)
-        //    printf("opengl error: ");
-        //cout << glGetError() << endl;
-        ////cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
-        //printf("red %f\n", pixel[0]);
-        //printf("green %f\n", pixel[2]);
-        //printf("blue %f\n", pixel[3]);
-        //memset(pixel, 0, 3*sizeof(GLfloat));
-
 	glutSwapBuffers();
 }
 
@@ -346,6 +327,32 @@ void update(int value)
 		vector<Point> *player2Pts;
 		player2Pts = &(player2->positions);
 
+		float magic_constant = 0;
+		float scaler1 = 1;
+		float scaler2 = 1;
+
+                //looking at pixel look for collision, not infront
+                glReadPixels(window_width * 0.5 + player1Pt.z * MINIMAP_SCALE_Z * scaler2 + magic_constant, window_height * 0.5 - MINIMAP_HEIGHT * scaler1 + player1Pt.x * MINIMAP_SCALE_X * scaler2 + magic_constant, 1, 1, GL_RGB , GL_FLOAT , pixel);
+                int k = glGetError();
+                if(glGetError() != GL_NO_ERROR)
+                    printf("opengl error: ");
+                //cout << glGetError() << endl;
+                //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
+
+		cout << " R: " << pixel[0] << " G: " << pixel[1] << " B: " << pixel[2] << endl;
+
+                if( pixel[0]>0 && pixel[1]<0.5 && pixel[2]<0.5)
+                {
+                    //cout << "red only" << endl;
+                }
+                if( pixel[2]>0 && pixel[1]<0.5 && pixel[0]<0.5)
+		{
+                    //cout << "blue only" << endl;
+		}
+
+                memset(pixel, 0, 3*sizeof(GLfloat));
+                //if(!isCollision){  }
+
 		//	Make sure the minimap display list is empty, then make it again.
 		glDeleteLists(minimap_list_index, 1);
 		glNewList(minimap_list_index, GL_COMPILE);
@@ -353,31 +360,33 @@ void update(int value)
         	//SET TO 2D
         	glMatrixMode(GL_MODELVIEW);
         	glLoadIdentity();
-		glViewport(width / 2 - MINIMAP_WIDTH * 0.5, height / 2 - MINIMAP_HEIGHT * 0.5, MINIMAP_WIDTH, MINIMAP_HEIGHT);
-		//glViewport(width / 2, height / 2, MINIMAP_WIDTH / 2, MINIMAP_HEIGHT / 2);
-
-		glMatrixMode(GL_MODELVIEW);
-        	glLoadIdentity();
+		glViewport(window_width / 2 - MINIMAP_WIDTH * 0.5, window_height / 2 - MINIMAP_HEIGHT * 0.5, MINIMAP_WIDTH, MINIMAP_HEIGHT);
 
         	//MINI MAP
         	glColor3f(1.0, 1.0, 1.0);
 
-        	//area for map
-        	//glRectf(-width*12.4, -height*11.4, -width*12.4 + MINIMAP_WIDTH, -height*11.5 + MINIMAP_HEIGHT);
+        	//area for minimap
         	glRectf(-MINIMAP_WIDTH / 8, -MINIMAP_HEIGHT / 8, MINIMAP_WIDTH / 8, MINIMAP_HEIGHT / 8);
-        	//glRectf(0, 0, MINIMAP_WIDTH, MINIMAP_HEIGHT);
 
+		//	Note: Drawing current position is disabled
         	//2D position of each player
         	glPointSize(5.0f);
 
 		//	Player 1
-        	glColor3fv(player1color);
-        	glBegin(GL_POINTS);
-        	glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0.0);
-        	glEnd();
+        	//glColor3fv(player1color);
+        	//glBegin(GL_POINTS);
+        	//glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0.0);
+        	//glEnd();
+
+		//	Player 2
+        	//glColor3fv(player2color);
+        	//glBegin(GL_POINTS);
+        	//glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0.0);
+        	//glEnd();
 
         	//lines for player 1
                 glLineWidth(2.0f);
+        	glColor3fv(player1color);
         	glBegin(GL_LINES);
         	for(int i=0; i < player1Pts->size() - 1; ++i) {
         	        player1Pt = (*player1Pts)[i];
@@ -389,13 +398,9 @@ void update(int value)
 
         	glEnd();
 
-		//	Player 2
-        	glColor3fv(player2color);
-        	glBegin(GL_POINTS);
-        	glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0.0);
-        	glEnd();
-
         	//lines for player 2
+                glLineWidth(2.0f);
+        	glColor3fv(player2color);
         	glBegin(GL_LINES);
         	for(int i=0; i < player2Pts->size() - 1; ++i) {
         	        player2Pt = (*player2Pts)[i];
@@ -407,26 +412,6 @@ void update(int value)
         	glEnd();
 		glEndList();
                 glFlush();
-
-                //TEST
-                glColor3f(1.0, 0.0, 0.0);
-                glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
-
-                //looking at pixel look for collision, not infront
-                glReadPixels(width/2, height/2, 1, 1, GL_RGB , GL_FLOAT , pixel);
-                int k = glGetError();
-                if(glGetError() != GL_NO_ERROR)
-                    printf("opengl error: ");
-                //cout << glGetError() << endl;
-                //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
-                if( pixel[0]>0 && pixel[1]<0.5 && pixel[2]<0.5)
-                {
-                    cout << "red only" << endl;
-                }
-                if( pixel[2]>0 && pixel[1]<0.5 && pixel[0]<0.5)
-                    cout << "blue only" << endl;
-                memset(pixel, 0, 3*sizeof(GLfloat));
-                //if(!isCollision){  }
 
 	}
 	glutTimerFunc(updatePeriod, update, 1);
@@ -516,7 +501,7 @@ int main(int argc, char **argv)
 	printInteraction();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); 
-	glutInitWindowSize(width, height);
+	glutInitWindowSize(window_width, window_height);
 	glutInitWindowPosition(100, 100); 
 	glutCreateWindow ("steve"); 
 
