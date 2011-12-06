@@ -43,11 +43,24 @@ static int rainbow_tex_width = 398, rainbow_tex_height = 107;
 static GLuint rainbowTexture;
 
 //	the width and length of the playing area
-static const int ARENA_WIDTH = 1000;
-static const int ARENA_LENGTH = 1000;
+static const int ARENA_WIDTH = 500;
+static const int ARENA_LENGTH = 500;
 
 //	the height of the walls
 static const int ARENA_HEIGHT = 200;
+
+static GLuint minimap_list_index;
+static GLubyte minimap_list;
+
+//	the width and length of the map
+static const int MINIMAP_WIDTH = 250;
+static const int MINIMAP_HEIGHT = 250;
+
+static const float MINIMAP_SCALE_X = 0.05;
+static const float MINIMAP_SCALE_Z = 0.05;
+
+static const int MINIMAP_OFFSET_X = 700;
+static const int MINIMAP_OFFSET_Z = 700;
 
 //	Camera field of view values
 static const GLdouble CAM_RIGHT = 50;
@@ -102,6 +115,7 @@ void drawBackWallsAndFloors ()
 
 	// tron lit floor
 	glColor3f(0.3, 0.3, 0.8);
+	glColor3f(0.0, 0.0, 0.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	for(float z=-ARENA_LENGTH; z<ARENA_LENGTH; z+=2.0)
 	{
@@ -200,12 +214,11 @@ void drawScene(void)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glPushMatrix();
+
 	glViewport(0, height/2.0, width, height/2.0);
 	glLoadIdentity();
 	//glOrtho(-CAM_RIGHT, CAM_RIGHT, -CAM_TOP, CAM_TOP, -CAM_BACK, CAM_FWD);
-
-        float temp1 = player1Pt.z*30;
-        float temp2 = player1Pt.x*30;
 
 	//  Locate the camera behind, and off to the side, of cat initially.
 	//  Don't rotate the camera.
@@ -237,63 +250,6 @@ void drawScene(void)
 		glPopMatrix();
 	}
 
-        //SET TO 2D
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        gluOrtho2D(-width/2, 0, 0, height/2);
-        glDisable(GL_DEPTH_TEST);
-
-        //MINI MAP
-        glColor3f(1.0, 1.0, 1.0);
-        //semi transparent menu would be AWESOME
-        //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-
-        //area for map
-        glRectf(-width*12.4, -height*11.4, -width*12.4 + ARENA_WIDTH*62, -height*11.5 +ARENA_LENGTH*62);
-
-        //lines for player
-        glBegin(GL_LINES);
-        glColor3fv(player1color);
-        for(int i=0; i < player1Pts->size() - 1; ++i) {
-                player1Pt = (*player1Pts)[i];
-                player1Pt2 = (*player1Pts)[i+1];
-
-                //int k = CatCollision(player1Pt2.z*30-width*9.4, player1Pt2.x*30-height*7.0,player1->direction,2);
-                glVertex3f(player1Pt2.z*30-width*9.4, player1Pt2.x*30-height*7.0, 0);
-                glVertex3f(player1Pt.z*30-width*9.4, player1Pt.x*30-height*7.0, 0);
-                //cout << k << endl;
-        }
-        glEnd();
-
-        //2D position
-        int tempx, tempy;
-        tempx = -325;  //works at 30 to -920 which is the width
-        tempy = 370;  //works from 50-535 which is the height of the mini map
-        glPointSize(5.0f);
-        glBegin(GL_POINTS);
-        glVertex3f(temp1-width*9.4, temp2 -height*7.0, 0.0);
-        //glVertex3f(-width*6.45, -height*12.2, 0.0);  // here when read (width/4, height/2)
-        //glVertex3f((-width)*6.45, (-height+100)*12.2, 0.0);// here when read (width/4, height/2+100/4)
-        glVertex3f((-width+tempx)*6.43, (-height+tempy)*12.1, 0.0);// here when read (width/4+tempx/4, height/2+tempy/4)
-        glEnd();
-
-        //TEST
-        glColor3f(1.0, 0.0, 0.0);
-        //glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
-
-        //looking at pixel look for collision, not infront
-        glFlush();
-        glReadPixels(width/4+tempx/4, height/2+tempy/4, 1, 1, GL_RGB , GL_FLOAT , pixel);
-        int k = glGetError();
-        if(glGetError() != GL_NO_ERROR)
-            printf("opengl error: ");
-        cout << glGetError() << endl;
-        //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
-        printf("red %f\n", pixel[0]);
-        printf("green %f\n", pixel[2]);
-        printf("blue %f\n", pixel[3]);
-        memset(pixel, 0, 3*sizeof(GLfloat));
-
 	glPopMatrix();
 
 
@@ -302,12 +258,11 @@ void drawScene(void)
 	vector<Point> *player2Pts;
 	player2Pts = &(player2->positions);
 
+	glPushMatrix();
+
         //Drawing 3D
 	glViewport(0, 0, width, height/2.0);
 	glLoadIdentity();
-
-	temp1 = player2Pt.z*30;
-	temp2 = player2Pt.x*30;
 
 	//  Locate the camera behind, and off to the side, of cat initially.
 	//  Don't rotate the camera.
@@ -338,7 +293,26 @@ void drawScene(void)
 		glPopMatrix();
 	}
 
+	glPopMatrix();
 	glDisable(GL_DEPTH_TEST);
+
+	glCallList(minimap_list_index);
+        ////TEST
+        //glColor3f(1.0, 0.0, 0.0);
+        ////glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
+
+        ////looking at pixel look for collision, not infront
+        //glReadPixels(width/4+tempx/4, height/2+tempy/4, 1, 1, GL_RGB , GL_FLOAT , pixel);
+        //int k = glGetError();
+        //if(glGetError() != GL_NO_ERROR)
+        //    printf("opengl error: ");
+        //cout << glGetError() << endl;
+        ////cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
+        //printf("red %f\n", pixel[0]);
+        //printf("green %f\n", pixel[2]);
+        //printf("blue %f\n", pixel[3]);
+        //memset(pixel, 0, 3*sizeof(GLfloat));
+
 	glutSwapBuffers();
 }
 
@@ -348,10 +322,82 @@ void update(int value)
 	float goal, tempAngle, stillturn=0;
 	Point player1Pt = player1->positions[player1->positions.size() - 1];
 
-	//	Do nothing if the game is paused
+	//	Only update if the game is not paused.
 	if (!paused) {
 		player1->tick();
 		player2->tick();
+
+		//	Get some of the players' positions for use with the minimap
+		Point player1Pt = player1->positions[player1->positions.size() - 1];
+		Point player1Pt2;
+		vector<Point> *player1Pts;
+		player1Pts = &(player1->positions);
+
+		Point player2Pt = player2->positions[player2->positions.size() - 1];
+		Point player2Pt2;
+		vector<Point> *player2Pts;
+		player2Pts = &(player2->positions);
+
+		//	Make sure the minimap display list is empty, then make it again.
+		glDeleteLists(minimap_list_index, 1);
+		glNewList(minimap_list_index, GL_COMPILE);
+        	glDisable(GL_DEPTH_TEST);
+        	//SET TO 2D
+        	glMatrixMode(GL_MODELVIEW);
+        	glLoadIdentity();
+		glViewport(width / 2 - MINIMAP_WIDTH * 0.75, height / 2 - MINIMAP_HEIGHT * 0.75, MINIMAP_WIDTH, MINIMAP_HEIGHT);
+
+		glMatrixMode(GL_MODELVIEW);
+        	glLoadIdentity();
+
+        	//MINI MAP
+        	glColor3f(1.0, 1.0, 1.0);
+
+        	//area for map
+        	//glRectf(-width*12.4, -height*11.4, -width*12.4 + MINIMAP_WIDTH, -height*11.5 + MINIMAP_HEIGHT);
+        	//glRectf(-MINIMAP_WIDTH / 2, -MINIMAP_HEIGHT / 2, MINIMAP_WIDTH / 2, MINIMAP_HEIGHT / 2);
+        	glRectf(0, 0, MINIMAP_WIDTH, MINIMAP_HEIGHT);
+
+        	//2D position of each player
+        	glPointSize(5.0f);
+
+		//	Player 1
+        	glColor3fv(player1color);
+        	glBegin(GL_POINTS);
+        	glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0.0);
+        	glEnd();
+
+        	//lines for player 1
+        	glBegin(GL_LINES);
+        	for(int i=0; i < player1Pts->size() - 1; ++i) {
+        	        player1Pt = (*player1Pts)[i];
+        	        player1Pt2 = (*player1Pts)[i+1];
+
+        	        glVertex3f(player1Pt2.z * MINIMAP_SCALE_Z, player1Pt2.x * MINIMAP_SCALE_X, 0);
+        	        glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0);
+        	}
+
+        	glEnd();
+
+		//	Player 2
+        	glColor3fv(player2color);
+        	glBegin(GL_POINTS);
+        	glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0.0);
+        	glEnd();
+
+        	//lines for player 2
+        	glBegin(GL_LINES);
+        	for(int i=0; i < player2Pts->size() - 1; ++i) {
+        	        player2Pt = (*player2Pts)[i];
+        	        player2Pt2 = (*player2Pts)[i+1];
+
+        	        glVertex3f(player2Pt2.z * MINIMAP_SCALE_Z, player2Pt2.x * MINIMAP_SCALE_X, 0);
+        	        glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0);
+        	}
+
+        	glEnd();
+
+		glEndList();
 
                 isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90, 3);
 		if(!isCollision){
@@ -376,6 +422,9 @@ void init(void)
 	}
 
 	rainbowTexture = loadTexture(RAINBOW_TRAIL_TEXTURE, rainbow_tex_width, rainbow_tex_height);
+
+	minimap_list_index = glGenLists(1);
+	minimap_list = 0;
 
 	player1 = new Player(30, 30, 0, textureFrames, &rainbowTexture);
 	player2 = new Player(80, 80, 1, textureFrames, &rainbowTexture);
@@ -451,7 +500,7 @@ int main(int argc, char **argv)
 	glutReshapeFunc(resize);  
 	glutKeyboardFunc(keyInput);
 	glutSpecialFunc(specialKeyInput);
-	glutTimerFunc(5, update, 1);
+	glutTimerFunc(10, update, 1);
 	glutMainLoop(); 
 
 	return 0;  
