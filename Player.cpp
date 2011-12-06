@@ -39,6 +39,7 @@ Player::Player(float initialX, float initialZ, uint8_t initialDirection, GLuint 
 }
 
 void Player::init(float initialX, float initialZ, uint8_t initialDirection, GLuint *textureFrames, GLuint *rainbowTexture) {
+	collided = false;
 	frameCount = 0;
 
 	turning = false;
