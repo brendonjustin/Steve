@@ -24,6 +24,7 @@
 using namespace std;
 
 // Globals.
+static const float PI = 3.14159265;
 static bool paused = false;
 
 static float player1color[3] = {1.0, 0.0, 0.0}; 
@@ -300,26 +301,6 @@ void drawScene(void)
 
 	//	Draw the minimap
 	glCallList(minimap_list_index);
-
-	//	Read pixel values from the minimap.
-	//	Note that this is mostly wrong now.
-
-        ////TEST
-        //glColor3f(1.0, 0.0, 0.0);
-        ////glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
-
-        ////looking at pixel look for collision, not infront
-        //glReadPixels(width/4+tempx/4, height/2+tempy/4, 1, 1, GL_RGB , GL_FLOAT , pixel);
-        //int k = glGetError();
-        //if(glGetError() != GL_NO_ERROR)
-        //    printf("opengl error: ");
-        //cout << glGetError() << endl;
-        ////cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
-        //printf("red %f\n", pixel[0]);
-        //printf("green %f\n", pixel[2]);
-        //printf("blue %f\n", pixel[3]);
-        //memset(pixel, 0, 3*sizeof(GLfloat));
-
 	glutSwapBuffers();
 }
 
@@ -328,7 +309,6 @@ void update(int value)
 {
 	float goal, tempAngle, stillturn=0;
         GLfloat pixel[3];
-	Point player1Pt = player1->positions[player1->positions.size() - 1];
 
 	//	Only update if the game is not paused.
 	if (!paused) {
@@ -363,15 +343,13 @@ void update(int value)
         	glColor3f(1.0, 1.0, 1.0);
 
         	//area for map
-        	//glRectf(-width*12.4, -height*11.4, -width*12.4 + MINIMAP_WIDTH, -height*11.5 + MINIMAP_HEIGHT);
         	glRectf(-MINIMAP_WIDTH / 8, -MINIMAP_HEIGHT / 8, MINIMAP_WIDTH / 8, MINIMAP_HEIGHT / 8);
-        	//glRectf(0, 0, MINIMAP_WIDTH, MINIMAP_HEIGHT);
 
         	//2D position of each player
         	glPointSize(5.0f);
 
 		//	Player 1
-        	glColor3fv(player1color);
+                glColor3fv(player1color);
         	glBegin(GL_POINTS);
         	glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0.0);
         	glEnd();
@@ -387,12 +365,18 @@ void update(int value)
         	        glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0);
         	}
 
-        	glEnd();
+                glEnd();
 
 		//	Player 2
         	glColor3fv(player2color);
+                float temp = player2->direction*90+180;
+                if (temp >= 360) temp = temp - 360;
+                temp = temp*PI/180;
+
         	glBegin(GL_POINTS);
-        	glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0.0);
+                glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0.0);
+                //glVertex3f(player2Pt.z * MINIMAP_SCALE_Z + cos(temp),
+                //           player2Pt.x * MINIMAP_SCALE_X + sin(temp), 0.0);
         	glEnd();
 
         	//lines for player 2
@@ -400,7 +384,6 @@ void update(int value)
         	for(int i=0; i < player2Pts->size() - 1; ++i) {
         	        player2Pt = (*player2Pts)[i];
         	        player2Pt2 = (*player2Pts)[i+1];
-
         	        glVertex3f(player2Pt2.z * MINIMAP_SCALE_Z, player2Pt2.x * MINIMAP_SCALE_X, 0);
         	        glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0);
         	}
@@ -410,21 +393,26 @@ void update(int value)
 
                 //TEST
                 glColor3f(1.0, 0.0, 0.0);
-                glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
+                glRectf(-MINIMAP_WIDTH / 8, -MINIMAP_HEIGHT / 8, MINIMAP_WIDTH / 8, MINIMAP_HEIGHT / 8); //READING PIXEL HERE ...
 
-                //looking at pixel look for collision, not infront
-                glReadPixels(width/2, height/2, 1, 1, GL_RGB , GL_FLOAT , pixel);
+                //looking at pixel look for collision player 2
+                glReadPixels(player2Pt.z * MINIMAP_SCALE_Z + cos(temp),
+                             player2Pt.x * MINIMAP_SCALE_X + sin(temp),
+                             1, 1, GL_RGB , GL_FLOAT , pixel);
+
                 int k = glGetError();
                 if(glGetError() != GL_NO_ERROR)
                     printf("opengl error: ");
                 //cout << glGetError() << endl;
-                //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
-                if( pixel[0]>0 && pixel[1]<0.5 && pixel[2]<0.5)
+
+                if( pixel[0]>0 && pixel[1]<0.1 && pixel[2]<0.1)
                 {
                     cout << "red only" << endl;
                 }
-                if( pixel[2]>0 && pixel[1]<0.5 && pixel[0]<0.5)
+                if( pixel[2]>0 && pixel[1]<0.1 && pixel[0]<0.1)
+                {
                     cout << "blue only" << endl;
+                }
                 memset(pixel, 0, 3*sizeof(GLfloat));
                 //if(!isCollision){  }
 
