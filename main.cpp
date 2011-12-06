@@ -179,19 +179,21 @@ int CatCollision(float x, float z, float a, int d)
     }
     //check player walls
     if( d == 2) { //2D
-        /*const int size = 1 * 1 * 4;
-        GLubyte pixels[size];
+        ////TEST
+        //glColor3f(1.0, 0.0, 0.0);
+        ////glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
 
-        //looking at pixel, not infront
-        glReadPixels(0, 0, x, z, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-
-        for(int index = 0; index < size; index+=4)
-        {
-            cout << "red " << (unsigned)pixels[index+0] << endl;
-            cout << "green " << (unsigned)pixels[index+1] << endl;
-            cout << "blue " << (unsigned)pixels[index+2] << endl;
-        }
-        pixels[0] = '\0';*/
+        ////looking at pixel look for collision, not infront
+        //glReadPixels(width/4+tempx/4, height/2+tempy/4, 1, 1, GL_RGB , GL_FLOAT , pixel);
+        //int k = glGetError();
+        //if(glGetError() != GL_NO_ERROR)
+        //    printf("opengl error: ");
+        //cout << glGetError() << endl;
+        ////cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
+        //printf("red %f\n", pixel[0]);
+        //printf("green %f\n", pixel[2]);
+        //printf("blue %f\n", pixel[3]);
+        //memset(pixel, 0, 3*sizeof(GLfloat));
     }
 	return 0;
 }
@@ -199,7 +201,6 @@ int CatCollision(float x, float z, float a, int d)
 // Drawing routine.
 void drawScene(void)
 {
-        GLfloat pixel[3];
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LEQUAL);
@@ -326,6 +327,7 @@ void drawScene(void)
 void update(int value)
 {
 	float goal, tempAngle, stillturn=0;
+        GLfloat pixel[3];
 	Point player1Pt = player1->positions[player1->positions.size() - 1];
 
 	//	Only update if the game is not paused.
@@ -401,14 +403,27 @@ void update(int value)
         	        glVertex3f(player2Pt2.z * MINIMAP_SCALE_Z, player2Pt2.x * MINIMAP_SCALE_X, 0);
         	        glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0);
         	}
-
         	glEnd();
-
 		glEndList();
 
-                isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90, 3);
-		if(!isCollision){
-		}
+                //isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90, 3);
+                //if(!isCollision){
+                //TEST
+                glColor3f(1.0, 0.0, 0.0);
+                glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
+
+                //looking at pixel look for collision, not infront
+                glReadPixels(width/2, height/2, 1, 1, GL_RGB , GL_FLOAT , pixel);
+                int k = glGetError();
+                if(glGetError() != GL_NO_ERROR)
+                    printf("opengl error: ");
+                cout << glGetError() << endl;
+                //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
+                printf("red %f\n", pixel[0]);
+                printf("green %f\n", pixel[1]);
+                printf("blue %f\n", pixel[2]);
+                memset(pixel, 0, 3*sizeof(GLfloat));
+
 	}
 	glutTimerFunc(updatePeriod, update, 1);
 	glutPostRedisplay();
