@@ -49,6 +49,8 @@ static const int ARENA_LENGTH = 500;
 //	the height of the walls
 static const int ARENA_HEIGHT = 200;
 
+static const int GRID_SPACING = 6;
+
 static GLuint minimap_list_index;
 static GLubyte minimap_list;
 
@@ -76,7 +78,7 @@ static const unsigned int CAM_DIAG_UP_DIST = 10;
 static int isCollision = 0;
 
 //	Time interval between frames.
-static int animationPeriod = 10;
+static int updatePeriod = 20;
 
 //	The size of the GLUT window.
 static int width = 1000, height = 700;
@@ -115,17 +117,16 @@ void drawBackWallsAndFloors ()
 
 	// tron lit floor
 	glColor3f(0.3, 0.3, 0.8);
-	glColor3f(0.0, 0.0, 0.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	for(float z=-ARENA_LENGTH; z<ARENA_LENGTH; z+=2.0)
+	for(float z =- ARENA_LENGTH; z < ARENA_LENGTH; z += GRID_SPACING)
 	{
 		glBegin(GL_QUADS);
-		for(float x=-ARENA_WIDTH; x<ARENA_WIDTH; x+=2.0)
+		for(float x =- ARENA_WIDTH; x < ARENA_WIDTH; x += GRID_SPACING)
 		{
 			glVertex3f(x, 0, z);                               
-			glVertex3f(x+2, 0, z);                               
-			glVertex3f(x+2, 0, z+2);                               
-			glVertex3f(x, 0, z+2);                               
+			glVertex3f(x + GRID_SPACING, 0, z);                               
+			glVertex3f(x + GRID_SPACING, 0, z + GRID_SPACING);
+			glVertex3f(x, 0, z + GRID_SPACING);                               
 		}
 		glEnd();
 	}
@@ -296,7 +297,12 @@ void drawScene(void)
 	glPopMatrix();
 	glDisable(GL_DEPTH_TEST);
 
+	//	Draw the minimap
 	glCallList(minimap_list_index);
+
+	//	Read pixel values from the minimap.
+	//	Note that this is mostly wrong now.
+
         ////TEST
         //glColor3f(1.0, 0.0, 0.0);
         ////glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
@@ -345,7 +351,8 @@ void update(int value)
         	//SET TO 2D
         	glMatrixMode(GL_MODELVIEW);
         	glLoadIdentity();
-		glViewport(width / 2 - MINIMAP_WIDTH * 0.75, height / 2 - MINIMAP_HEIGHT * 0.75, MINIMAP_WIDTH, MINIMAP_HEIGHT);
+		glViewport(width / 2 - MINIMAP_WIDTH * 0.5, height / 2 - MINIMAP_HEIGHT * 0.5, MINIMAP_WIDTH, MINIMAP_HEIGHT);
+		//glViewport(width / 2, height / 2, MINIMAP_WIDTH / 2, MINIMAP_HEIGHT / 2);
 
 		glMatrixMode(GL_MODELVIEW);
         	glLoadIdentity();
@@ -355,8 +362,8 @@ void update(int value)
 
         	//area for map
         	//glRectf(-width*12.4, -height*11.4, -width*12.4 + MINIMAP_WIDTH, -height*11.5 + MINIMAP_HEIGHT);
-        	//glRectf(-MINIMAP_WIDTH / 2, -MINIMAP_HEIGHT / 2, MINIMAP_WIDTH / 2, MINIMAP_HEIGHT / 2);
-        	glRectf(0, 0, MINIMAP_WIDTH, MINIMAP_HEIGHT);
+        	glRectf(-MINIMAP_WIDTH / 8, -MINIMAP_HEIGHT / 8, MINIMAP_WIDTH / 8, MINIMAP_HEIGHT / 8);
+        	//glRectf(0, 0, MINIMAP_WIDTH, MINIMAP_HEIGHT);
 
         	//2D position of each player
         	glPointSize(5.0f);
@@ -403,7 +410,7 @@ void update(int value)
 		if(!isCollision){
 		}
 	}
-	glutTimerFunc(animationPeriod, update, 1);
+	glutTimerFunc(updatePeriod, update, 1);
 	glutPostRedisplay();
 }
 
@@ -500,7 +507,7 @@ int main(int argc, char **argv)
 	glutReshapeFunc(resize);  
 	glutKeyboardFunc(keyInput);
 	glutSpecialFunc(specialKeyInput);
-	glutTimerFunc(10, update, 1);
+	glutTimerFunc(updatePeriod, update, 1);
 	glutMainLoop(); 
 
 	return 0;  
