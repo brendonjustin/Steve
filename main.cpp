@@ -377,6 +377,7 @@ void update(int value)
         	glEnd();
 
         	//lines for player 1
+                glLineWidth(2.0f);
         	glBegin(GL_LINES);
         	for(int i=0; i < player1Pts->size() - 1; ++i) {
         	        player1Pt = (*player1Pts)[i];
@@ -405,9 +406,8 @@ void update(int value)
         	}
         	glEnd();
 		glEndList();
+                glFlush();
 
-                //isCollision = CatCollision(player1Pt.x, player1Pt.z, player1->direction * 90, 3);
-                //if(!isCollision){
                 //TEST
                 glColor3f(1.0, 0.0, 0.0);
                 glRectf(-width*4.7, -height*5.4, -width*4.6, -height*5.0); //READING PIXEL HERE ...
@@ -417,12 +417,16 @@ void update(int value)
                 int k = glGetError();
                 if(glGetError() != GL_NO_ERROR)
                     printf("opengl error: ");
-                cout << glGetError() << endl;
+                //cout << glGetError() << endl;
                 //cout<< sizeof(GLfloat) << "  " << sizeof(float) << endl;
-                printf("red %f\n", pixel[0]);
-                printf("green %f\n", pixel[1]);
-                printf("blue %f\n", pixel[2]);
+                if( pixel[0]>0 && pixel[1]<0.5 && pixel[2]<0.5)
+                {
+                    cout << "red only" << endl;
+                }
+                if( pixel[2]>0 && pixel[1]<0.5 && pixel[0]<0.5)
+                    cout << "blue only" << endl;
                 memset(pixel, 0, 3*sizeof(GLfloat));
+                //if(!isCollision){  }
 
 	}
 	glutTimerFunc(updatePeriod, update, 1);
