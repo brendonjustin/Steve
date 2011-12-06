@@ -27,6 +27,8 @@ public:
 	static const float FWD;
 	static const float BACK;
 
+	bool collided;
+
 	float playerColor[3];
 	GLuint *texFrames;
 	GLuint *rainbowTex;
