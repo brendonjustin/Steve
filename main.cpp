@@ -72,7 +72,7 @@ static const unsigned int CAM_BACK_DIST = 3;
 static const unsigned int CAM_DIAG_LEFT_DIST = 2;
 static const unsigned int CAM_DIAG_UP_DIST = 10;
 
-static const bool checkCollisions = false;
+static const bool checkCollisions = true;
 
 // Time interval between calculation updates.
 static int updatePeriod = 20;
@@ -328,7 +328,7 @@ void update(int value)
 		}
 
 		//	Check if the player is on a trail, or off the mini map
-		if ((pixel[0] > 0 && pixel[1] < 0.5 && pixel[2] < 0.5) || (pixel[2] > 0 && pixel[1] < 0.5 && pixel[0] < 0.5) || (pixel[0] != 0.4 && pixel[1] > 0.125 && pixel[2] < 0.5))
+		if ((pixel[2] > 0.95 && pixel[1] < 0.5 && pixel[0] < 0.5))
 		{
 			player1->collided = true;
 		}
@@ -343,7 +343,7 @@ void update(int value)
 			//cout << glGetError() << endl;
 		}
 
-		if ((pixel[0] > 0 && pixel[1] < 0.5 && pixel[2] < 0.5) || (pixel[2] > 0 && pixel[1] < 0.5 && pixel[0] < 0.5))
+		if ((pixel[0] > 0.95 && pixel[1] < 0.5 && pixel[2] < 0.5))
 		{
 			player2->collided = true;
 		}
