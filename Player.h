@@ -46,7 +46,6 @@ public:
 	Player(float, float, uint8_t, GLuint *, GLuint *);
 
 private:
-	bool turning;
 	void init(float, float, uint8_t, GLuint *, GLuint *);
 	void drawCat();
 	void drawTrail();

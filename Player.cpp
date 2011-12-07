@@ -22,7 +22,7 @@ static const unsigned int TRAIL_HEIGHT = 15;
 static const unsigned int FRAME_INTERVAL = 12;
 static const unsigned int FRAME_CYCLE_INTERVAL = 72;
 
-static const unsigned int INVERSE_CAT_SPEED = 1;
+static const float INVERSE_CAT_SPEED = 0.66;
 
 const float Player::RIGHT = 0.25;
 const float Player::TOP = 85;
@@ -41,8 +41,6 @@ Player::Player(float initialX, float initialZ, uint8_t initialDirection, GLuint 
 void Player::init(float initialX, float initialZ, uint8_t initialDirection, GLuint *textureFrames, GLuint *rainbowTexture) {
 	collided = false;
 	frameCount = 0;
-
-	turning = false;
 
 	Point initialPt;
 	initialPt.x = initialX;
@@ -74,22 +72,43 @@ void Player::init(float initialX, float initialZ, uint8_t initialDirection, GLui
 
 //	Turn (responding to user input)
 void Player::turn(bool turnRight) {
-	positions.push_back(positions[positions.size() - 1]);
+	Point pos = positions[positions.size() - 1];
 
-	if (!turning) {
-		turning = true;
+	int modVal = 2;
+	int modDivide = modVal / 2;
+	int modMag = 0;
 
-		// TODO: animate?
-		if (turnRight) {
-			direction -= 1;
-		} else {
-			direction += 1;
-		}
-
-		direction = direction % 4;
+	switch (direction) {
+	case 0:
+		modMag = (int)(pos.z / modVal);
+		pos.z = modMag * modVal;
+		break;
+	case 1:
+		modMag = (int)(pos.x / modVal);
+		pos.x = modMag * modVal;
+		//pos.x = (modMag + 1) * modVal;
+		break;
+	case 2:
+		modMag = (int)(pos.z / modVal);
+		pos.z = modMag * modVal;
+		break;
+	case 3:
+		modMag = (int)(pos.x / modVal);
+		pos.x = modMag * modVal;
+		//pos.x = (modMag + 1) * modVal;
+		break;
 	}
 
-	turning = false;
+	positions[positions.size() - 1] = pos;
+	positions.push_back(positions[positions.size() - 1]);
+
+	if (turnRight) {
+		direction -= 1;
+	} else {
+		direction += 1;
+	}
+
+	direction = direction % 4;
 }
 
 //	Move the player 
