@@ -312,113 +312,117 @@ void update(int value)
 
 	// Only update if the game is not paused.
 	if (!paused) {
+		player1->tick();
 		player2->tick();
+
+		// Get some of the players' positions for use with the minimap
+		Point player1Pt = player1->positions[player1->positions.size() - 1];
+		Point player1Pt2;
+		vector<Point> *player1Pts;
+		player1Pts = &(player1->positions);
+
+		Point player2Pt = player2->positions[player2->positions.size() - 1];
+		Point player2Pt2;
+		vector<Point> *player2Pts;
+		player2Pts = &(player2->positions);
+
+		static float magic_constant = 3.0;
+
+		//	Check the player's position on the minimap.  If there is already something there,
+		//	then they are colliding with it.
+		// Bottom left corner of the map:
+		//glReadPixels(window_width * 0.5 - MINIMAP_WIDTH / 4, window_height * 0.5 - MINIMAP_HEIGHT / 4, 1, 1, GL_RGB , GL_FLOAT , pixel);
+		// Top right corner of the map:
+		//glReadPixels(window_width * 0.5 + MINIMAP_WIDTH / 4, window_height * 0.5 + MINIMAP_HEIGHT / 4, 1, 1, GL_RGB , GL_FLOAT , pixel);
+		glReadPixels(window_width * 0.5 + player1Pt.z * MINIMAP_SCALE_Z * magic_constant, window_height * 0.5 + player1Pt.x * MINIMAP_SCALE_X * magic_constant, 1, 1, GL_RGB , GL_FLOAT , pixel);
+
+		int k = glGetError();
+		if(glGetError() != GL_NO_ERROR)
+		{
+			printf("opengl error: ");
+			//cout << glGetError() << endl;
+		}
+
+		//cout << " R: " << pixel[0] << " G: " << pixel[1] << " B: " << pixel[2] << " x: " << player1Pt.x << " z: " << player1Pt.z << endl;
+
+		if( pixel[0]>0 && pixel[1]<0.5 && pixel[2]<0.5)
+		{
+			//cout << "red only" << endl;
+		}
+		if( pixel[2]>0 && pixel[1]<0.5 && pixel[0]<0.5)
+		{
+			//cout << "blue only" << endl;
+		}
+
+		memset(pixel, 0, 3*sizeof(GLfloat));
+		//if(!isCollision){ }
+
+		// Make sure the minimap display list is empty, then make it again.
+		glDeleteLists(minimap_list_index, 1);
+		glNewList(minimap_list_index, GL_COMPILE);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//SET TO 2D
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glViewport(window_width / 2 - MINIMAP_WIDTH * 0.5, window_height / 2 - MINIMAP_HEIGHT * 0.5, MINIMAP_WIDTH, MINIMAP_HEIGHT);
+
+		//MINI MAP
+		glColor4f(0.0, 0.0, 0.8, 0.8);
+
+		//area for minimap
+		glRectf(-MINIMAP_WIDTH / 8, -MINIMAP_HEIGHT / 8, MINIMAP_WIDTH / 8, MINIMAP_HEIGHT / 8);
+
+		// Note: Drawing current position is disabled
+		//2D position of each player
+		glPointSize(5.0f);
+
+		// Player 1
+		//glColor3fv(player1color);
+		//glBegin(GL_POINTS);
+		//glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0.0);
+		//glEnd();
+
+		// Player 2
+		//glColor3fv(player2color);
+		//glBegin(GL_POINTS);
+		//glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0.0);
+		//glEnd();
+
+		//lines for player 1
+		glLineWidth(2.0f);
+		glColor3fv(player1color);
+		glBegin(GL_LINES);
+		for(int i=0; i < player1Pts->size() - 1; ++i) {
+			player1Pt = (*player1Pts)[i];
+			player1Pt2 = (*player1Pts)[i+1];
+
+			glVertex3f(player1Pt2.z * MINIMAP_SCALE_Z, player1Pt2.x * MINIMAP_SCALE_X, 0);
+			glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0);
+		}
+
+		glEnd();
+
+		//lines for player 2
+		glLineWidth(2.0f);
+		glColor3fv(player2color);
+		glBegin(GL_LINES);
+		for(int i=0; i < player2Pts->size() - 1; ++i) {
+			player2Pt = (*player2Pts)[i];
+			player2Pt2 = (*player2Pts)[i+1];
+
+			glVertex3f(player2Pt2.z * MINIMAP_SCALE_Z, player2Pt2.x * MINIMAP_SCALE_X, 0);
+			glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0);
+		}
+		glEnd();
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		glEndList();
+		glFlush();
+
 	}
-	player1->tick();
 
-	// Get some of the players' positions for use with the minimap
-	Point player1Pt = player1->positions[player1->positions.size() - 1];
-	Point player1Pt2;
-	vector<Point> *player1Pts;
-	player1Pts = &(player1->positions);
-
-	Point player2Pt = player2->positions[player2->positions.size() - 1];
-	Point player2Pt2;
-	vector<Point> *player2Pts;
-	player2Pts = &(player2->positions);
-
-	float magic_constant = 3.0;
-	float scaler1 = 1;
-	float scaler2 = 1;
-
-	//looking at pixel look for collision, not infront
-	//glReadPixels(window_width * 0.5 + player1Pt.z * MINIMAP_SCALE_Z * scaler2 + magic_constant, window_height * 0.5 - MINIMAP_HEIGHT * scaler1 + player1Pt.x * MINIMAP_SCALE_X * scaler2 + magic_constant, 1, 1, GL_RGB , GL_FLOAT , pixel);
-	// Bottom left corner of the map:
-	//glReadPixels(window_width * 0.5 - MINIMAP_WIDTH / 4, window_height * 0.5 - MINIMAP_HEIGHT / 4, 1, 1, GL_RGB , GL_FLOAT , pixel);
-	// Top right corner of the map:
-	//glReadPixels(window_width * 0.5 + MINIMAP_WIDTH / 4, window_height * 0.5 + MINIMAP_HEIGHT / 4, 1, 1, GL_RGB , GL_FLOAT , pixel);
-	glReadPixels(window_width * 0.5 + player1Pt.z * MINIMAP_SCALE_Z * magic_constant, window_height * 0.5 + player1Pt.x * MINIMAP_SCALE_X * magic_constant, 1, 1, GL_RGB , GL_FLOAT , pixel);
-	int k = glGetError();
-	if(glGetError() != GL_NO_ERROR)
-		printf("opengl error: ");
-	//cout << glGetError() << endl;
-	//cout<< sizeof(GLfloat) << " " << sizeof(float) << endl;
-
-	cout << " R: " << pixel[0] << " G: " << pixel[1] << " B: " << pixel[2] << " x: " << player1Pt.x << " z: " << player1Pt.z << endl;
-
-	if( pixel[0]>0 && pixel[1]<0.5 && pixel[2]<0.5)
-	{
-		//cout << "red only" << endl;
-	}
-	if( pixel[2]>0 && pixel[1]<0.5 && pixel[0]<0.5)
-	{
-		//cout << "blue only" << endl;
-	}
-
-	memset(pixel, 0, 3*sizeof(GLfloat));
-	//if(!isCollision){ }
-
-	// Make sure the minimap display list is empty, then make it again.
-	glDeleteLists(minimap_list_index, 1);
-	glNewList(minimap_list_index, GL_COMPILE);
-	glDisable(GL_DEPTH_TEST);
-	//SET TO 2D
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glViewport(window_width / 2 - MINIMAP_WIDTH * 0.5, window_height / 2 - MINIMAP_HEIGHT * 0.5, MINIMAP_WIDTH, MINIMAP_HEIGHT);
-
-	//MINI MAP
-	glColor3f(1.0, 1.0, 1.0);
-
-	//area for minimap
-	glRectf(-MINIMAP_WIDTH / 8, -MINIMAP_HEIGHT / 8, MINIMAP_WIDTH / 8, MINIMAP_HEIGHT / 8);
-
-	// Note: Drawing current position is disabled
-	//2D position of each player
-	glPointSize(5.0f);
-
-	// Player 1
-	//glColor3fv(player1color);
-	//glBegin(GL_POINTS);
-	//glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0.0);
-	//glEnd();
-
-	// Player 2
-	//glColor3fv(player2color);
-	//glBegin(GL_POINTS);
-	//glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0.0);
-	//glEnd();
-
-	//lines for player 1
-	glLineWidth(2.0f);
-	glColor3fv(player1color);
-	glBegin(GL_LINES);
-	for(int i=0; i < player1Pts->size() - 1; ++i) {
-		player1Pt = (*player1Pts)[i];
-		player1Pt2 = (*player1Pts)[i+1];
-
-		glVertex3f(player1Pt2.z * MINIMAP_SCALE_Z, player1Pt2.x * MINIMAP_SCALE_X, 0);
-		glVertex3f(player1Pt.z * MINIMAP_SCALE_Z, player1Pt.x * MINIMAP_SCALE_X, 0);
-	}
-
-	glEnd();
-
-	//lines for player 2
-	glLineWidth(2.0f);
-	glColor3fv(player2color);
-	glBegin(GL_LINES);
-	for(int i=0; i < player2Pts->size() - 1; ++i) {
-		player2Pt = (*player2Pts)[i];
-		player2Pt2 = (*player2Pts)[i+1];
-
-		glVertex3f(player2Pt2.z * MINIMAP_SCALE_Z, player2Pt2.x * MINIMAP_SCALE_X, 0);
-		glVertex3f(player2Pt.z * MINIMAP_SCALE_Z, player2Pt.x * MINIMAP_SCALE_X, 0);
-	}
-	glEnd();
-	glEndList();
-	glFlush();
-
-	//}
 	glutTimerFunc(updatePeriod, update, 1);
 	glutPostRedisplay();
 }
