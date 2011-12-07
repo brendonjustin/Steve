@@ -49,7 +49,7 @@ static const int ARENA_LENGTH = 500;
 // the height of the walls
 static const int ARENA_HEIGHT = 200;
 
-static const int GRID_SPACING = 6;
+static const int GRID_SPACING = 8;
 
 static GLuint minimap_list_index;
 static GLubyte minimap_list;
@@ -332,8 +332,6 @@ void update(int value)
 		//	then they are colliding with it.
 		// Bottom left corner of the map:
 		//glReadPixels(window_width * 0.5 - MINIMAP_WIDTH / 4, window_height * 0.5 - MINIMAP_HEIGHT / 4, 1, 1, GL_RGB , GL_FLOAT , pixel);
-		// Top right corner of the map:
-		//glReadPixels(window_width * 0.5 + MINIMAP_WIDTH / 4, window_height * 0.5 + MINIMAP_HEIGHT / 4, 1, 1, GL_RGB , GL_FLOAT , pixel);
 		glReadPixels(window_width * 0.5 + player1Pt.z * MINIMAP_SCALE_Z * magic_constant, window_height * 0.5 + player1Pt.x * MINIMAP_SCALE_X * magic_constant, 1, 1, GL_RGB , GL_FLOAT , pixel);
 
 		int k = glGetError();
@@ -345,17 +343,36 @@ void update(int value)
 
 		//cout << " R: " << pixel[0] << " G: " << pixel[1] << " B: " << pixel[2] << " x: " << player1Pt.x << " z: " << player1Pt.z << endl;
 
-		if( pixel[0]>0 && pixel[1]<0.5 && pixel[2]<0.5)
-		{
-			//cout << "red only" << endl;
-		}
-		if( pixel[2]>0 && pixel[1]<0.5 && pixel[0]<0.5)
-		{
-			//cout << "blue only" << endl;
-		}
+		//if( pixel[0]>0 && pixel[1]<0.5 && pixel[2]<0.5)
+		//{
+		//	//cout << "red only" << endl;
+		//}
+		//if( pixel[2]>0 && pixel[1]<0.5 && pixel[0]<0.5)
+		//{
+		//	//cout << "blue only" << endl;
+		//}
 
+		if ((pixel[0] > 0 && pixel[1] < 0.5 && pixel[2] < 0.5) || (pixel[2] > 0 && pixel[1] < 0.5 && pixel[0] < 0.5))
+		{
+			player1->collided = true;
+		}
 		memset(pixel, 0, 3*sizeof(GLfloat));
 		//if(!isCollision){ }
+
+		glReadPixels(window_width * 0.5 + player2Pt.z * MINIMAP_SCALE_Z * magic_constant, window_height * 0.5 + player2Pt.x * MINIMAP_SCALE_X * magic_constant, 1, 1, GL_RGB , GL_FLOAT , pixel);
+
+		k = glGetError();
+		if(glGetError() != GL_NO_ERROR)
+		{
+			printf("opengl error: ");
+			//cout << glGetError() << endl;
+		}
+
+		if ((pixel[0] > 0 && pixel[1] < 0.5 && pixel[2] < 0.5) || (pixel[2] > 0 && pixel[1] < 0.5 && pixel[0] < 0.5))
+		{
+			player2->collided = true;
+		}
+		memset(pixel, 0, 3*sizeof(GLfloat));
 
 		// Make sure the minimap display list is empty, then make it again.
 		glDeleteLists(minimap_list_index, 1);
@@ -369,7 +386,7 @@ void update(int value)
 		glViewport(window_width / 2 - MINIMAP_WIDTH * 0.5, window_height / 2 - MINIMAP_HEIGHT * 0.5, MINIMAP_WIDTH, MINIMAP_HEIGHT);
 
 		//MINI MAP
-		glColor4f(0.0, 0.0, 0.8, 0.8);
+		glColor4f(0.0, 0.0, 0.8, 0.5);
 
 		//area for minimap
 		glRectf(-MINIMAP_WIDTH / 8, -MINIMAP_HEIGHT / 8, MINIMAP_WIDTH / 8, MINIMAP_HEIGHT / 8);
