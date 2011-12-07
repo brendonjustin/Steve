@@ -24,7 +24,7 @@
 using namespace std;
 
 // Globals.
-static bool paused = false;
+static bool paused = true;
 
 static float player1color[3] = {1.0, 0.0, 0.0};
 static float player2color[3] = {0.0, 0.0, 1.0};
@@ -314,7 +314,7 @@ void update(int value)
 		vector<Point> *player2Pts;
 		player2Pts = &(player2->positions);
 
-		static float magic_constant = 3.0;
+		static float magic_constant = 2.0;
 
 		//	Check the player's position on the minimap.  If there is already something there,
 		//	then they are colliding with it.
@@ -347,6 +347,7 @@ void update(int value)
 		{
 			player2->collided = true;
 		}
+		//printf("R: %f, G: %f, B: %f\n", pixel[0], pixel[1], pixel[2]);
 		memset(pixel, 0, 3*sizeof(GLfloat));
 
 		// Make sure the minimap display list is empty, then make it again.
