@@ -49,7 +49,7 @@ static const int ARENA_LENGTH = 500;
 // the height of the walls
 static const int ARENA_HEIGHT = 200;
 
-static const int GRID_SPACING = 8;
+static const int GRID_SPACING = 10;
 
 static GLuint minimap_list_index;
 static GLubyte minimap_list;
@@ -60,9 +60,6 @@ static const int MINIMAP_HEIGHT = 200;
 
 static const float MINIMAP_SCALE_X = 0.05;
 static const float MINIMAP_SCALE_Z = 0.05;
-
-static const int MINIMAP_OFFSET_X = 700;
-static const int MINIMAP_OFFSET_Z = 700;
 
 // Camera field of view values
 static const GLdouble CAM_RIGHT = 50;
@@ -116,7 +113,7 @@ void drawBackWallsAndFloors ()
 	glEnd();
 
 	// tron lit floor
-	glColor3f(0.3, 0.3, 0.8);
+	glColor3f(0.3, 0.1, 0.8);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	for(float z =- ARENA_LENGTH; z < ARENA_LENGTH; z += GRID_SPACING)
 	{
