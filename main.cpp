@@ -55,8 +55,8 @@ static GLuint minimap_list_index;
 static GLubyte minimap_list;
 
 // the width and length of the map
-static const int MINIMAP_WIDTH = 250;
-static const int MINIMAP_HEIGHT = 250;
+static const int MINIMAP_WIDTH = 200;
+static const int MINIMAP_HEIGHT = 200;
 
 static const float MINIMAP_SCALE_X = 0.05;
 static const float MINIMAP_SCALE_Z = 0.05;
@@ -75,9 +75,9 @@ static const unsigned int CAM_BACK_DIST = 3;
 static const unsigned int CAM_DIAG_LEFT_DIST = 2;
 static const unsigned int CAM_DIAG_UP_DIST = 10;
 
-static int isCollision = 0;
+static const bool checkCollisions = false;
 
-// Time interval between frames.
+// Time interval between calculation updates.
 static int updatePeriod = 20;
 
 // The size of the GLUT window.
@@ -243,15 +243,6 @@ void drawScene(void)
 
 	drawFrontWalls();
 
-	if(isCollision){
-		glPushMatrix();
-		glTranslatef(0.0, 0.0, -50);
-		glColor3fv(player1color);
-		glRasterPos3f(-28.0, 25.0, 0.0);
-		writeBitmapString((void*)font, (char*)"CRAHSED!!!!!");
-		glPopMatrix();
-	}
-
 	glPopMatrix();
 
 
@@ -286,15 +277,6 @@ void drawScene(void)
 
 	drawFrontWalls();
 
-	if(isCollision){
-		glPushMatrix();
-		glTranslatef(0.0, 0.0, -60);
-		glColor3fv(player1color);
-		glRasterPos3f(-28.0, 25.0, 0.0);
-		writeBitmapString((void*)font, (char*)"You Win!!!!!");
-		glPopMatrix();
-	}
-
 	glPopMatrix();
 	glDisable(GL_DEPTH_TEST);
 
@@ -312,8 +294,17 @@ void update(int value)
 
 	// Only update if the game is not paused.
 	if (!paused) {
-		player1->tick();
-		player2->tick();
+		if (checkCollisions) {
+			if (!player1->collided) {
+				player1->tick();
+			}
+			if (!player2->collided) {
+				player2->tick();
+			}
+		} else {
+			player1->tick();
+			player2->tick();
+		}
 
 		// Get some of the players' positions for use with the minimap
 		Point player1Pt = player1->positions[player1->positions.size() - 1];
@@ -330,8 +321,6 @@ void update(int value)
 
 		//	Check the player's position on the minimap.  If there is already something there,
 		//	then they are colliding with it.
-		// Bottom left corner of the map:
-		//glReadPixels(window_width * 0.5 - MINIMAP_WIDTH / 4, window_height * 0.5 - MINIMAP_HEIGHT / 4, 1, 1, GL_RGB , GL_FLOAT , pixel);
 		glReadPixels(window_width * 0.5 + player1Pt.z * MINIMAP_SCALE_Z * magic_constant, window_height * 0.5 + player1Pt.x * MINIMAP_SCALE_X * magic_constant, 1, 1, GL_RGB , GL_FLOAT , pixel);
 
 		int k = glGetError();
@@ -341,23 +330,12 @@ void update(int value)
 			//cout << glGetError() << endl;
 		}
 
-		//cout << " R: " << pixel[0] << " G: " << pixel[1] << " B: " << pixel[2] << " x: " << player1Pt.x << " z: " << player1Pt.z << endl;
-
-		//if( pixel[0]>0 && pixel[1]<0.5 && pixel[2]<0.5)
-		//{
-		//	//cout << "red only" << endl;
-		//}
-		//if( pixel[2]>0 && pixel[1]<0.5 && pixel[0]<0.5)
-		//{
-		//	//cout << "blue only" << endl;
-		//}
-
-		if ((pixel[0] > 0 && pixel[1] < 0.5 && pixel[2] < 0.5) || (pixel[2] > 0 && pixel[1] < 0.5 && pixel[0] < 0.5))
+		//	Check if the player is on a trail, or off the mini map
+		if ((pixel[0] > 0 && pixel[1] < 0.5 && pixel[2] < 0.5) || (pixel[2] > 0 && pixel[1] < 0.5 && pixel[0] < 0.5) || (pixel[0] != 0.4 && pixel[1] > 0.125 && pixel[2] < 0.5))
 		{
 			player1->collided = true;
 		}
 		memset(pixel, 0, 3*sizeof(GLfloat));
-		//if(!isCollision){ }
 
 		glReadPixels(window_width * 0.5 + player2Pt.z * MINIMAP_SCALE_Z * magic_constant, window_height * 0.5 + player2Pt.x * MINIMAP_SCALE_X * magic_constant, 1, 1, GL_RGB , GL_FLOAT , pixel);
 
@@ -386,14 +364,14 @@ void update(int value)
 		glViewport(window_width / 2 - MINIMAP_WIDTH * 0.5, window_height / 2 - MINIMAP_HEIGHT * 0.5, MINIMAP_WIDTH, MINIMAP_HEIGHT);
 
 		//MINI MAP
-		glColor4f(0.0, 0.0, 0.8, 0.5);
+		glColor4f(0.4, 0.0, 0.8, 0.5);
 
 		//area for minimap
 		glRectf(-MINIMAP_WIDTH / 8, -MINIMAP_HEIGHT / 8, MINIMAP_WIDTH / 8, MINIMAP_HEIGHT / 8);
 
 		// Note: Drawing current position is disabled
 		//2D position of each player
-		glPointSize(5.0f);
+		//glPointSize(5.0f);
 
 		// Player 1
 		//glColor3fv(player1color);
