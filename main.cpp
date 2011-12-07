@@ -328,7 +328,7 @@ void update(int value)
 		}
 
 		//	Check if the player is on a trail, or off the mini map
-		if ((pixel[2] > 0.95 && pixel[1] < 0.5 && pixel[0] < 0.5))
+		if ((fabs(pixel[0] - player2color[0]) < 0.2 && fabs(pixel[1] - player2color[1]) < 0.2 && fabs(pixel[2] - player2color[2]) < 0.2))
 		{
 			player1->collided = true;
 		}
@@ -343,7 +343,7 @@ void update(int value)
 			//cout << glGetError() << endl;
 		}
 
-		if ((pixel[0] > 0.95 && pixel[1] < 0.5 && pixel[2] < 0.5))
+		if ((fabs(pixel[0] - player1color[0]) < 0.2 && fabs(pixel[1] - player1color[1]) < 0.2 && fabs(pixel[2] - player1color[2]) < 0.2))
 		{
 			player2->collided = true;
 		}
@@ -365,6 +365,9 @@ void update(int value)
 
 		//area for minimap
 		glRectf(-MINIMAP_WIDTH / 8, -MINIMAP_HEIGHT / 8, MINIMAP_WIDTH / 8, MINIMAP_HEIGHT / 8);
+
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 
 		// Note: Drawing current position is disabled
 		//2D position of each player
