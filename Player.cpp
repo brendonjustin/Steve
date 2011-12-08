@@ -58,16 +58,6 @@ void Player::init(float initialX, float initialZ, uint8_t initialDirection, GLui
 	playerColor[0] = 1.0;
 	playerColor[1] = 0.0;
 	playerColor[2] = 0.0; 
-
-	//	Note that this isn't used, the way texture animation is done
-	catList = glGenLists(1);
-	glNewList(catList, GL_COMPILE);
-
-	glPushMatrix();
-	this->drawCat();
-	glPopMatrix();
-
-	glEndList();
 }
 
 //	Turn (responding to user input)

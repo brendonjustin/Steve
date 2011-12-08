@@ -414,8 +414,8 @@ void update(int value)
 		glEnd();
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
-		glEndList();
 		glFlush();
+		glEndList();
 
 	}
 

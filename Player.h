@@ -34,8 +34,6 @@ public:
 	GLuint *rainbowTex;
 	unsigned int frameCount;
 
-	unsigned int catList; // Display lists base index.
-
 	uint8_t direction;
 	std::vector<Point> positions;
 
