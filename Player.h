@@ -30,10 +30,6 @@ public:
 	bool collided;
 
 	float playerColor[3];
-	GLuint *texFrames;
-	GLuint *rainbowTex;
-	unsigned int frameCount;
-
 	uint8_t direction;
 	std::vector<Point> positions;
 
@@ -44,6 +40,10 @@ public:
 	Player(float, float, uint8_t, GLuint *, GLuint *);
 
 private:
+	GLuint *texFrames;
+	GLuint *rainbowTex;
+	unsigned int frameCount;
+
 	void init(float, float, uint8_t, GLuint *, GLuint *);
 	void drawCat();
 	void drawTrail();
