@@ -1,0 +1,237 @@
+\documentclass[12pt]{article} 
+
+%%% PACKAGES %%%
+
+\usepackage{fullpage}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+
+% (1) choose a font that is available as T1
+% for example:
+\usepackage{lmodern}
+
+% (2) specify encoding
+\usepackage[T1]{fontenc}
+
+% (3) load symbol definitions
+\usepackage{textcomp}
+
+\begin{document}
+
+\title{Computer Graphics Final Project} 
+\author{Kimberly Tam, Brendon Justin} 
+\date{December 8, 2011}
+\maketitle
+
+\begin{abstract}
+Nyan Battle is our final project for CSCI 4750, Computer Graphics, in the fall semester of 2011. 
+This project is a two player game with graphics implemented in OpenGL. The game uses 3D graphics for players' views, and 2D graphics for an overlaid mini map.  Other technologies used for the project include C++ for game logic, and the PNG image format for the game textures. This document explains our implementation, major design decisions, and failures, and explains how we used methods from the course, including:
+
+\begin{itemize}
+\item Orthographic Projection, Viewing Box and World Coordinates
+\item OpenGL Window and Screen Coordinates
+\item Three Dimensions
+\item Depth Buffer
+\item Perspective Projection
+\item Display Lists
+\item Drawing Text
+\item Programming Non-ASCII Keys
+\item Viewports
+\item Scaling, Rotation and Translation
+\item Animation
+\end{itemize} 
+
+In addition to functionality covered in class, we also implemented other techniques as necessary for a functional project. Functionality integrated in our project that required additional outside research include:
+
+\begin{itemize}
+\item Switching between 3D and 2D drawing
+\item Reading pixels from the framebuffer
+\end{itemize}
+\end{abstract} 
+
+\newpage
+\tableofcontents
+\newpage
+
+\section {Design Decisions}
+
+Most design decisions are rooted in techniques covered in class, or the group's past experiences.  The following subsections discuss our design decisions, issues in their implementation, and if they persist in the current iteration of the project.
+
+\subsection{Game Play}
+
+We decided that the game would be a competitive multiplayer game, for two simultaneous players.  The objective would be to outlast the other player by avoiding the arena's walls and the players' trails.  As players move, they should leave behind a trail which both represents their path and serves as an obstacle for all players.  Since games benefit from textured graphics over simple geometry, we needed to choose a theme and create textures for that theme.  We chose the Nyan Cat graphics found on the internet, as they could be used both for the characters and their trails.  The Nyan Cat character is a cat with a pop-tart body that leaves a rainbow trail in its wake.  Each player should be able to control the direction that their character takes, to cause his rival to crash before he does.  Both players should be able to play on one keyboard at the same time.  The chosen controls are common direction controls in computer games:
+
+\begin{itemize}
+\item Player 1: a to turn left, d to turn right
+\item Player 2: the left arrow key to turn left, the right arrow key to turn right
+\end{itemize}
+
+Each player should have his own view; we decided to use a common split screen display, with the top view for player 1 and the bottom view for player 2.  Each view centers on that player's Nyan Cat.
+Again, the objective of the game is not to crash into a wall, the first player to crash looses.  There are two types of walls: static walls and dynamic walls:
+
+\begin{itemize}
+\item Static Walls: Walls at the perimeter of the arena
+\item Dynamic Walls: The players' trails, created as they move around the arena
+\end{itemize}
+
+A top down mini map is proved in the center of the screen, so players may see each others' positions and trails at all times.
+
+\subsection{Arena}
+\label{sec:arena_design}
+
+The plan for the arena consisted of a floor and four walls, to bound the play area.  During testing, several changes were made to improve gameplay. \\
+
+The walls were initially rendered opaque, so players could clearly see the bounds of the arena.  When testing the game, however, two of the walls obscured the player's view in some circumstances.  In response, the two foreground walls were changed to be semi-transparent, so players would never have their view obstructed.  Adding transparency to some of the walls required additional changes to the code: the two transparent walls had to be drawn after all of the other objects, to properly blend with other objects using transparency.  Drawing these walls was moved from the original arena drawing code, first in the drawing callback, to the end of the drawing callback.\\
+
+The floor, at first, was drawn as a solid color.  This led to difficulty in playing the game, as players had no way to judge distance with other a solid object moving under them.  A grid was added to the floor, to help players judge speed and distance.
+
+\subsection{Players}
+
+A class to represent each player persists from the original project design.  The class initially consisted of:
+
+\begin{itemize}
+\item Direction
+\item Positions
+\item Color
+\end{itemize}
+
+Positions was a vector of points, where a point consists of an X coordinate and a Z coordinate.  The positions vector held the player's starting point, all of the coordinates at which the player has turned, and the player's current position.  As features were added over time, more members were needed to hold the complete state of each player.  The current Player class includes:
+
+\begin{itemize}
+\item Collided (collision state)
+\item Nyan Cat textures
+\item Number of frames in the Nyan Cat animation
+\item Rainbow trail texture
+\item Cardinal direction
+\item Positions
+\item Color
+\end{itemize}
+
+Drawing for the Player class is fully encapsulated, and can be triggered by a public member function.
+
+\subsection{Collision Detection}
+
+The original collision detection concept for the project involved checking the distance of each player from every active obstacle.  For walls, this could be done by checking if the players' coordinates were fully inside of the arena, but trail collision would be more complex.  As trails are stored as vectors of turning points, a point to line distance function would have been required.  The function would have to check each player's position against every set of consecutive player positions, for every game state update.  The computational requirements of this approach, for every state update, called for investigating other approaches.  \\
+
+The game design called for a top down mini map showing each players' trails.  Showing trails on a 2D grid is effectively saving the occupied spaces in the playing field in the frame buffer, so collision detection using the mini map became a design possibility.  Detection is done by comparing the players' positions on the mini map to the positions of trails on the mini map.  If a player is on the same pixel as a trail, then that player has collided with the trail.  The size of the mini map proved to be the limiting factor for precision, as discussed in section \ref{sec:setbacks}.
+
+\section{Implementation}
+
+\subsection{Drawing the Arena}
+
+As discussed in section \ref{sec:arena_design}, the arena consists of four walls and a grid patterned floor.  The two walls furthest in a player's view are the first objects drawn in the game, followed by the floor.  These walls and the floor are opaque.  The last two walls, the closest objects in a player's view, are the last objects drawn.  They are drawn at 50\% opacity, and must be drawn last to blend correctly with objects behind them.  A snippet of the drawing code, from drawScene(void) in main.cpp, follows:\\
+
+\indent // draw walls and floor \\
+\indent drawBackWallsAndFloor(); \\
+\indent // draw players' cats and trails\\
+\indent player1-\textgreater draw();\\
+\indent player2-\textgreater draw();\\
+\indent // draw front walls for correction\\
+\indent drawFrontWalls();\\
+
+Each players' viewport is half of the window size, with player 1 having the top half, and player 2 having the bottom half.  Player 1's viewport declared in this manner:\\
+
+glViewport(0, window\textunderscore height/2.0, window\textunderscore width, window\textunderscore height/2.0);\\
+
+After the viewport is created, the arena and other objects are drawn.  Then player 2's viewport is created:\\
+
+glViewport(0, 0, window\textunderscore width, window\textunderscore height/2.0);\\
+
+The variables window\textunderscore width and window\textunderscore height represent the height and width of the program's window.  The walls are drawn with transparency as follows: \\
+
+\indent glEnable(GL\textunderscore BLEND);\\
+\indent glBlendFunc(GL\textunderscore SRC\textunderscore ALPHA, GL\textunderscore ONE\textunderscore MINUS\textunderscore SRC\textunderscore ALPHA);\\
+\indent // ... wall drawing code here ... \\
+\indent glDisable(GL\textunderscore BLEND);\\
+
+\subsection{Drawing Players and Paths}
+
+The Player class completely encapsulates drawing each player's Nyan Cat and rainbow trail.  The class is defined in the Player.h file and implemented in Player.cpp.  The players were originally represented as points, but the need for additional state variables prompted the change to a C++ class.  The resulting Player files are as follows.
+
+\subsubsection{Player.h}
+Player.h defines the Player class.\\
+
+\indent Public Member Functions:
+\begin{itemize}
+\item void turn(bool)
+\item void draw()
+\item Player (GLuint *, GLuint *)
+\item Player (float, float, uint8\textunderscore t, GLuint *, GLuint *)
+\end{itemize}
+
+The turn(bool) function causes the Player to turn left (right if the argument is true), and draw() causes the Player to draw its Nyan Cat and rainbow trail.  The latter two functions are constructors for the class, the first of which takes a pointer to an array of textures and a pointer to a single texture.  This function calls the section constructor with the default values for its arguments, the starting position and color for player 1.  The second constructor requires explicit X and Z starting coordinates, as well as a starting direction.
+
+\vspace{5 mm}
+\indent Public Attributes:
+
+\begin{itemize}
+\item bool collided
+\item float playerColor [3]
+\item uint8\textunderscore t direction
+\item std::vector\textless Point \textgreater positions
+\end{itemize}
+
+The playercolor, direction and positions variables were part of the Player class since its first design.  The playercolor variable holds the color assigned to the Player object, which is used to represent the object on the mini map.  The direction variable is used to determine which direction the player moves with the next game tick, and to control the direction that the Nyan Cat is facing when drawn.  The positions vector stores the Player object's starting location, all locations where the object has turned, and the object's current position.  The vector is used to determine where to draw the object's rainbow trail.  The collided state variable was added for testing, and later used in the game logic, to store when a player has lost.  The game update function checks if a Player object has collided already, and only updates the Player if the value is false.  \\
+
+The Player class also stores references to a texture and a texture array.  The texture pointer is initialized to the rainbow texture when a Player object is created; the texture array pointer is set to point to an array of Nyan Cat textures, each texture being a frame in an animation.  The class also has a state variable set to the number of frames in the Nyan Cat animation, as it has no way to safely determine this number on its own.  The animation cycles to another frame every 12 calls to the Player draw() function.
+
+\vspace{5 mm}
+\indent Static Public Attributes:
+
+\begin{itemize}
+\item static const float RIGHT = 0.25
+\item static const float TOP = 85
+\item static const float BOT = -15
+\item static const float FWD = 20
+\item static const float BACK = 0
+\end{itemize}
+
+These static attributes represent the size of the player, and were primarily used to find the appropriate size for the Nyan Cats.  The attributes are publicly accessible should they be needed for collision detection, or any other purpose in the future.
+
+\subsubsection{Camera}
+
+The camera for each player's viewport is set up for isometric views, with orthographic projections.  The camera was an over-the-shoulder type originally, but the 2D nature of Nyan Cat did not work well with this type.  The walls and floor proved to be a problem with a perspective projection, because they changed in apparent size depending on the player's location. An orthographic projection does not have this problem.  The isometric view also allows the player to better see the space around them, allowing them to play better.
+
+\subsubsection{Textures: Static and Animated}
+
+The PNG image format was chosen for the project's textures, as it is a common static image format on the internet.  The Nyan Cat images used were originally in an animated GIF, split into individual frames saved as PNGs.  OpenGL and GLUT do not natively support PNGs for textures, so Creative Commons Share Alike licensed PNG loading code was used from the \href{http://en.wikibooks.org/wiki/OpenGL_Programming/Intermediate/Textures#A_simple_libpng_example}{textures section of the OpenGL wikibook}. \\
+
+For Nyan Cat, the next animation frame's texture is used every 12 times the Player object is drawn to the screen.  This recreates the animation from the original GIF:\\
+
+\indent //	Rotate texture every 8 calls to draw, making an animation\\
+\indent	glBindTexture(GL\textunderscore TEXTURE\textunderscore 2D, *(texFrames+(frameCount++/FRAME\textunderscore INTERVAL)));\\
+\indent	frameCount = frameCount \% FRAME\textunderscore CYCLE\textunderscore INTERVAL;\\
+
+The rainbow trail is drawn using GL\textunderscore QUADS, with the bottom Y coordinate 5 units above the arena floor, and the top coordinate at 15 unites above the floor.  The X and Z coordinates correspond to the points stored in the Player object.  The texture is repeated on the trails based on the distance between points used, to create a seamless appearance.
+
+\subsection{Mini Map}
+
+A display list to draw the mini map is created on every game update step.  By changing the mini map in the update code rather than the drawing code, drawing is kept as fast as possible.  As the frame rate of the game is not limited, but the update rate is, this reduces unnecessary recalculations of the mini map.  Several constant global variables were calculated to scale correctly between the large arena to the much smaller mini map.
+
+As the mini map displays both players' positions and trails at all times, it is used for collision detection, as explained in the next section.
+
+\subsection{Collision Detection}
+
+The game involves two kinds of obstacles that players can collide with: the arena walls, and player trails.  The types of obstacles is checked using different methods:
+
+\begin{itemize}
+\item Arena walls: check if the current position of a player is within the boundaries of the arena.
+\item Inner walls: check if the player has collided based on the mini map.
+\end{itemize}
+
+The process to check for a collision using the mini map is to: read the pixel on the mini map representing the player's position, after the player has moved but before his position is updated on the mini map.  If the pixel matches either player's color, he has collided with a trail.  glReadPixels is used to retrieve the colors of pixels in the mini map.  Collision detection does not work as well as it could, sometimes triggering when players are visibly separated from a wall when a collision registers.  The performance of the collision detection code is discussed in the next section.
+
+\section{Setbacks and Failures}
+\label{sec:setbacks}
+
+Collision detection proved to be the most difficult aspect of the game.  Once the decision was made to use the mini map for collision detection, setbacks frequently occurred in the project.  The major setbacks involving collision detection with the mini map were: drawing the mini map at the correct size, drawing the players' trails correctly on the mini map, and converting between arena coordinates and mini map coordinates.  Drawing the mini map correctly required the use of different scale factors for different OpenGL functions; the functions glRectf and glViewport required scale factors of 0.125 and 0.5, respectively, to size the mini map.  glVertex3f was used to draw players' trails on the mini map, and used the mini map's scale factor unchanged.  To check mini map pixels, for potential collisions, glReadPixels was used.  It required a scale factor of 2 beyond the mini map's scale factor, unlike any other related functions.\\
+
+The project experienced several setbacks using the mini map for collision detection.  The small size of the mini map limited precision; one pixel on the mini map corresponded to more than one unit in the playing field's coordinate system. The collision code initially considered a player and a trail to be in the same location even when visually separated by many pixels.  The mini map was sized to avoid obscuring the players' views, so it could not be dramatically enlarged. The solution was to increase the players' speed from 1 to 1.5 units per tick, and decrease the update rate of the game from 100 Hz to 50 Hz. Players move less frequently, but more per move, approximately one pixel on the mini map for every time step.  Collision detection is now accurate enough to enjoy the game.\\
+
+The major failure of the project is ordering the player polygons and their trails correctly.  The game currently draws, in order: the first player, his trail, the second player, and his trail.  Each player's trail is then always drawn in front of his Nyan Cat, even if the trail is technically behind the player.  OpenGL's depth buffer cannot be used for drawing in these cases, as the Nyan Cats and their trails use transparency.  
+
+\section{Conclusion}
+
+The game includes all of the functionality in its original design: two player simultaneous play, collision detection, and Nyan Cat themed players.  With orthographic projections, display lists, multiple viewports, scaling, rotation, and textures, it makes effective use of basic OpenGL functionality.  The game uses encapsulation with the Player class to keep the code relatively simple and easy to change. It requires only minimal dependencies: OpenGL, GLUT and libpng.  The collision detection in the game is the only aspect which is not completely successful, but works well enough to demonstrate the concept. The project is successful from both design and functionality perspectives, and leaves open the possibility for expansion into a complete, if simple, game.
+
+\end{document}
